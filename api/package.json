@@ -1,0 +1,34 @@
+{
+  "name": "didicecube-api",
+  "version": "0.1.0",
+  "private": true,
+  "description": "API REST de Didicecube — solveur de Rubik's Cube, comptes utilisateurs, sauvegarde de la progression.",
+  "main": "app.js",
+  "type": "commonjs",
+  "scripts": {
+    "start": "node app.js",
+    "dev": "nodemon app.js",
+    "test": "node --test"
+  },
+  "keywords": [
+    "rubik's cube",
+    "solveur",
+    "api"
+  ],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "argon2": "^0.45.1",
+    "cors": "^2.8.6",
+    "dotenv": "^17.4.2",
+    "express": "^5.2.1",
+    "express-xss-sanitizer": "^2.0.2",
+    "joi": "^18.2.5",
+    "jsonwebtoken": "^9.0.3",
+    "multer": "^2.2.0",
+    "pg": "^8.23.0"
+  },
+  "devDependencies": {
+    "nodemon": "^3.1.14"
+  }
+}
