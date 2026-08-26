@@ -7,6 +7,7 @@ import {
   schemaCreationProgression,
   schemaMiseAJourProgression,
 } from "../validation/progression.validation.js";
+import { schemaCreationSkin, schemaAjoutImage } from "../validation/skin.validation.js";
 
 const ETAT_CUBE_VALIDE = "BJROVL".repeat(9); // 54 caractères, palette valide
 
@@ -74,6 +75,28 @@ describe("validation — progression", () => {
 
   it("mise à jour : etape_courante est requis", () => {
     const { error } = schemaMiseAJourProgression.validate({});
+    assert.ok(error);
+  });
+});
+
+describe("validation — skin", () => {
+  it("accepte un nom de skin valide", () => {
+    const { error } = schemaCreationSkin.validate({ nom_skin: "Néon" });
+    assert.equal(error, undefined);
+  });
+
+  it("refuse un nom de skin vide", () => {
+    const { error } = schemaCreationSkin.validate({ nom_skin: "" });
+    assert.ok(error);
+  });
+
+  it("accepte une couleur de la palette standard", () => {
+    const { error } = schemaAjoutImage.validate({ couleur: "rouge" });
+    assert.equal(error, undefined);
+  });
+
+  it("refuse une couleur hors palette (ex. violet)", () => {
+    const { error } = schemaAjoutImage.validate({ couleur: "violet" });
     assert.ok(error);
   });
 });

@@ -11,6 +11,9 @@ CLAUDE.md
 # Configuration éditeur locale
 .vscode
 
+# Fichiers uploadés par les utilisateurs (skins, photos de face du cube)
+uploads
+
 # Fichiers système
 .DS_Store
 

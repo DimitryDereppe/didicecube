@@ -12,6 +12,7 @@ import "./models/index.js"; // charge les associations Sequelize (effet de bord)
 import utilisateursRoutes from "./routes/utilisateurs.routes.js";
 import sessionsRoutes from "./routes/sessions.routes.js";
 import progressionsRoutes from "./routes/progressions.routes.js";
+import skinsRoutes from "./routes/skins.routes.js";
 import { routeIntrouvable, gererErreur } from "./middlewares/gestion-erreurs.middleware.js";
 
 const app = express();
@@ -28,9 +29,15 @@ app.use(express.json());
 app.use(cookieParser());
 app.use(xss()); // nettoie body/params/query contre le XSS (cf. section 8bis)
 
+// Fichiers uploadés (skins, photos de face du cube) servis tels quels :
+// contenu public par nature (habillage visuel du cube), pas besoin d'être
+// connecté pour les afficher.
+app.use("/uploads", express.static(process.env.UPLOAD_DIR || "uploads"));
+
 app.use("/utilisateurs", utilisateursRoutes);
 app.use("/sessions", sessionsRoutes);
 app.use("/progressions", progressionsRoutes);
+app.use("/skins", skinsRoutes);
 
 // Toujours en dernier : 404 puis 500 (cf. section 13).
 app.use(routeIntrouvable);
