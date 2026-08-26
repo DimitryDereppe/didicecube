@@ -1,0 +1,7 @@
+UTILISATEUR: id_utilisateur, email, pseudo, mot_de_passe_hash, date_inscription
+POSSEDER, 0N UTILISATEUR, 11 PROGRESSION
+PROGRESSION: id_progression, etat_depart, etape_courante, date_creation, date_maj
+TELECHARGER, 0N UTILISATEUR, 11 SKIN
+SKIN: id_skin, nom_skin, date_ajout
+COMPOSER, 0N SKIN, 11 IMAGE_SKIN
+IMAGE_SKIN: id_image_skin, couleur, chemin_fichier

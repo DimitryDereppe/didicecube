@@ -1,0 +1,22 @@
+{
+  "user": {
+    "email": "demo@didicecube.local",
+    "pseudo": "cubeur_demo",
+    "password": "Cube1234!"
+  },
+  "progressions": [
+    {
+      "etat_depart": "BJROVLBJROVLBJROVLBJROVLBJROVLBJROVLBJROVLBJROVLBJROVL",
+      "etape_courante": 3
+    }
+  ],
+  "skins": [
+    {
+      "nom_skin": "Néon",
+      "images": [
+        { "couleur": "blanc", "chemin_fichier": "skins/demo-neon/blanc.png" },
+        { "couleur": "rouge", "chemin_fichier": "skins/demo-neon/rouge.png" }
+      ]
+    }
+  ]
+}

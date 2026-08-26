@@ -1,0 +1,88 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- MCD Didicecube — construit à la main dans le style visuel de Mocodo
+     (le paquet mocodo n'est pas installable dans cet environnement de dev :
+     ni pip, ni accès réseau). Source Mocodo texte : mocodo-source.mcd -->
+<svg width="1230" height="195" viewBox="0 0 1230 195" xmlns="http://www.w3.org/2000/svg">
+<rect x="0" y="0" width="1230" height="195" fill="#FFFFFF" stroke="none" stroke-width="0"/>
+
+<!-- Association POSSEDER (UTILISATEUR 0,N →PROGRESSION 1,1) -->
+<g>
+	<line x1="170" y1="110" x2="210" y2="110" stroke="#000000" stroke-width="1"/>
+	<line x1="320" y1="110" x2="360" y2="110" stroke="#000000" stroke-width="1"/>
+	<rect x="210" y="84" width="110" height="52" fill="#FFFFFF" rx="14" stroke="#000000" stroke-width="1.5"/>
+	<line x1="210" y1="110" x2="320" y2="110" stroke="#000000" stroke-width="1"/>
+	<text x="231" y="102.6" fill="#000000" font-family="Courier New" font-size="14">POSSEDER</text>
+	<text x="182" y="126" fill="#000000" font-family="Courier New" font-size="12">1,1</text>
+	<text x="325" y="126" fill="#000000" font-family="Courier New" font-size="12">0,N</text>
+</g>
+
+<!-- Association TELECHARGER (UTILISATEUR 0,N →SKIN 1,1) -->
+<g>
+	<line x1="535" y1="110" x2="575" y2="110" stroke="#000000" stroke-width="1"/>
+	<line x1="710" y1="110" x2="750" y2="110" stroke="#000000" stroke-width="1"/>
+	<rect x="575" y="84" width="135" height="52" fill="#FFFFFF" rx="14" stroke="#000000" stroke-width="1.5"/>
+	<line x1="575" y1="110" x2="710" y2="110" stroke="#000000" stroke-width="1"/>
+	<text x="596" y="102.6" fill="#000000" font-family="Courier New" font-size="14">TELECHARGER</text>
+	<text x="547" y="126" fill="#000000" font-family="Courier New" font-size="12">0,N</text>
+	<text x="715" y="126" fill="#000000" font-family="Courier New" font-size="12">1,1</text>
+</g>
+
+<!-- Association COMPOSER (SKIN 0,N →IMAGE_SKIN 1,1) -->
+<g>
+	<line x1="865" y1="110" x2="905" y2="110" stroke="#000000" stroke-width="1"/>
+	<line x1="1015" y1="110" x2="1055" y2="110" stroke="#000000" stroke-width="1"/>
+	<rect x="905" y="84" width="110" height="52" fill="#FFFFFF" rx="14" stroke="#000000" stroke-width="1.5"/>
+	<line x1="905" y1="110" x2="1015" y2="110" stroke="#000000" stroke-width="1"/>
+	<text x="926" y="102.6" fill="#000000" font-family="Courier New" font-size="14">COMPOSER</text>
+	<text x="877" y="126" fill="#000000" font-family="Courier New" font-size="12">0,N</text>
+	<text x="1020" y="126" fill="#000000" font-family="Courier New" font-size="12">1,1</text>
+</g>
+
+<!-- Entity PROGRESSION -->
+<g>
+	<rect x="20" y="48" width="150" height="124" fill="none" stroke="#000000" stroke-width="1.5"/>
+	<line x1="20" y1="74" x2="170" y2="74" stroke="#000000" stroke-width="1"/>
+	<text x="49" y="66.6" fill="#000000" font-family="Courier New" font-size="14">PROGRESSION</text>
+	<text x="25" y="92.6" fill="#000000" font-family="Courier New" font-size="14">id_progression</text>
+	<line x1="25" y1="95" x2="165" y2="95" stroke="#000000" stroke-width="1"/>
+	<text x="25" y="110.6" fill="#000000" font-family="Courier New" font-size="14">etat_depart</text>
+	<text x="25" y="128.6" fill="#000000" font-family="Courier New" font-size="14">etape_courante</text>
+	<text x="25" y="146.6" fill="#000000" font-family="Courier New" font-size="14">date_creation</text>
+	<text x="25" y="164.6" fill="#000000" font-family="Courier New" font-size="14">date_maj</text>
+</g>
+
+<!-- Entity UTILISATEUR -->
+<g>
+	<rect x="360" y="48" width="175" height="124" fill="none" stroke="#000000" stroke-width="1.5"/>
+	<line x1="360" y1="74" x2="535" y2="74" stroke="#000000" stroke-width="1"/>
+	<text x="401" y="66.6" fill="#000000" font-family="Courier New" font-size="14">UTILISATEUR</text>
+	<text x="365" y="92.6" fill="#000000" font-family="Courier New" font-size="14">id_utilisateur</text>
+	<line x1="365" y1="95" x2="530" y2="95" stroke="#000000" stroke-width="1"/>
+	<text x="365" y="110.6" fill="#000000" font-family="Courier New" font-size="14">email</text>
+	<text x="365" y="128.6" fill="#000000" font-family="Courier New" font-size="14">pseudo</text>
+	<text x="365" y="146.6" fill="#000000" font-family="Courier New" font-size="14">mot_de_passe_hash</text>
+	<text x="365" y="164.6" fill="#000000" font-family="Courier New" font-size="14">date_inscription</text>
+</g>
+
+<!-- Entity SKIN -->
+<g>
+	<rect x="750" y="66" width="115" height="88" fill="none" stroke="#000000" stroke-width="1.5"/>
+	<line x1="750" y1="92" x2="865" y2="92" stroke="#000000" stroke-width="1"/>
+	<text x="791" y="84.6" fill="#000000" font-family="Courier New" font-size="14">SKIN</text>
+	<text x="755" y="110.6" fill="#000000" font-family="Courier New" font-size="14">id_skin</text>
+	<line x1="755" y1="113" x2="860" y2="113" stroke="#000000" stroke-width="1"/>
+	<text x="755" y="128.6" fill="#000000" font-family="Courier New" font-size="14">nom_skin</text>
+	<text x="755" y="146.6" fill="#000000" font-family="Courier New" font-size="14">date_ajout</text>
+</g>
+
+<!-- Entity IMAGE_SKIN -->
+<g>
+	<rect x="1055" y="66" width="150" height="88" fill="none" stroke="#000000" stroke-width="1.5"/>
+	<line x1="1055" y1="92" x2="1205" y2="92" stroke="#000000" stroke-width="1"/>
+	<text x="1088" y="84.6" fill="#000000" font-family="Courier New" font-size="14">IMAGE_SKIN</text>
+	<text x="1060" y="110.6" fill="#000000" font-family="Courier New" font-size="14">id_image_skin</text>
+	<line x1="1060" y1="113" x2="1200" y2="113" stroke="#000000" stroke-width="1"/>
+	<text x="1060" y="128.6" fill="#000000" font-family="Courier New" font-size="14">couleur</text>
+	<text x="1060" y="146.6" fill="#000000" font-family="Courier New" font-size="14">chemin_fichier</text>
+</g>
+</svg>

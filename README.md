@@ -30,9 +30,9 @@ visuellement étape par étape, ou en lecture continue.
 
 Stack enseignée par O'Clock, en deux parties :
 
-- **`api/`** — Node.js/Express (API REST), PostgreSQL (requêtes paramétrées,
-  pattern DataMapper), Argon2 (mots de passe), JWT (sessions), Joi
-  (validation), `multer` (upload de skins/photos).
+- **`api/`** — Node.js/Express (API REST), PostgreSQL via Sequelize (modèles,
+  associations, migrations/seed), Argon2 (mots de passe), JWT (sessions),
+  Joi (validation), `multer` (upload de skins/photos).
 - **`client/`** — Svelte + Vite. Cube rendu en CSS 3D (pas de librairie 3D
   externe). Algorithme de résolution codé à la main (méthode couche par
   couche).
@@ -52,7 +52,9 @@ cd didicecube
 # API
 cd api
 npm install
-cp .env.example .env   # une fois le fichier .env.example ajouté au projet
+cp .env.example .env   # puis renseigner ses propres identifiants PostgreSQL
+npm run migrate        # crée les tables à partir des modèles Sequelize
+npm run seed           # (optionnel) données de démo — écrase la BDD existante
 
 # Client (dans un autre terminal)
 cd ../client
@@ -61,9 +63,9 @@ npm install
 
 ## Variables d'environnement
 
-À définir dans `api/.env` une fois `api/.env.example` ajouté au projet : port
-du serveur, connexion PostgreSQL, secret JWT, dossier de stockage des
-fichiers téléchargés (skins/photos).
+Voir [api/.env.example](api/.env.example) : port du serveur, connexion
+PostgreSQL (`PGHOST`/`PGPORT`/`PGDATABASE`/`PGUSER`/`PGPASSWORD`), secret
+JWT, dossier de stockage des fichiers téléchargés (skins/photos).
 
 ## Scripts disponibles
 
@@ -71,6 +73,10 @@ fichiers téléchargés (skins/photos).
 
 - `npm run dev` — démarre le serveur avec rechargement automatique (nodemon).
 - `npm start` — démarre le serveur.
+- `npm run migrate` — crée/synchronise les tables PostgreSQL à partir des
+  modèles Sequelize (`api/models/`).
+- `npm run seed` — réinitialise la BDD avec des données de démo
+  (`api/migrations/dataset.json`).
 - `npm test` — lance les tests.
 
 ### `client/`
@@ -82,9 +88,12 @@ fichiers téléchargés (skins/photos).
 
 ```
 didicecube/
-├── api/           # Backend Express (API REST)
+├── api/                # Backend Express (API REST)
+│   ├── docs/           # Dictionnaire de données, MCD, MLD (Merise)
+│   ├── models/         # Modèles Sequelize (MPD)
+│   ├── migrations/     # Création des tables + seed de démo
 │   └── package.json
-├── client/        # Frontend Svelte + Vite
+├── client/             # Frontend Svelte + Vite
 │   └── package.json
 └── README.md
 ```
