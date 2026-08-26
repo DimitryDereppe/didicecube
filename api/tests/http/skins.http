@@ -9,7 +9,7 @@ POST {{baseUrl}}/sessions
 Content-Type: application/json
 
 {
-  "email": "demo@example.com",
+  "pseudo": "cubeur_demo",
   "mot_de_passe": "Cube1234!"
 }
 

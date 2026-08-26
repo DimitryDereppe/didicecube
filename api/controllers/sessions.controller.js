@@ -8,17 +8,17 @@ import { OPTIONS_COOKIE_TOKEN } from "../config/cookie-options.js";
 /** POST /sessions — connexion. */
 export async function connecter(req, res, next) {
   try {
-    const { email, mot_de_passe } = req.body;
-    const utilisateur = await Utilisateur.findOne({ where: { email } });
+    const { pseudo, mot_de_passe } = req.body;
+    const utilisateur = await Utilisateur.findOne({ where: { pseudo } });
 
-    // Message volontairement identique, que l'email existe ou non, et que
-    // ce soit l'email ou le mot de passe qui soit faux : ne pas permettre à
-    // un visiteur de deviner quels emails sont enregistrés (énumération de
-    // comptes).
+    // Message volontairement identique, que le pseudo existe ou non, et que
+    // ce soit le pseudo ou le mot de passe qui soit faux : ne pas permettre
+    // à un visiteur de deviner quels pseudos sont enregistrés (énumération
+    // de comptes).
     const motDePasseValide =
       utilisateur && (await verifierMotDePasse(utilisateur.mot_de_passe_hash, mot_de_passe));
     if (!motDePasseValide) {
-      return res.status(401).json({ message: "Email ou mot de passe incorrect." });
+      return res.status(401).json({ message: "Pseudo ou mot de passe incorrect." });
     }
 
     const token = genererToken(utilisateur);
@@ -29,7 +29,7 @@ export async function connecter(req, res, next) {
       pseudo: utilisateur.pseudo,
     });
   } catch (error) {
-    console.error("Erreur lors de la connexion", { email: req.body?.email, error: error.message });
+    console.error("Erreur lors de la connexion", { pseudo: req.body?.pseudo, error: error.message });
     next(error);
   }
 }

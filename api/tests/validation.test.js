@@ -39,7 +39,7 @@ describe("validation — utilisateur (inscription/connexion)", () => {
     assert.ok(error);
   });
 
-  it("connexion : email et mot de passe sont tous les deux requis", () => {
+  it("connexion : pseudo et mot de passe sont tous les deux requis", () => {
     // { abortEarly: false } : mêmes options que le middleware valider()
     // réellement utilisé par les routes (cf. validation.middleware.js),
     // sinon Joi s'arrête à la première erreur par défaut.

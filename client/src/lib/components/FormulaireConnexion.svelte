@@ -1,8 +1,9 @@
 <script>
-  // Formulaire de connexion — appelle POST /sessions via le store utilisateur.
+  // Formulaire de connexion — appelle POST /sessions via le store
+  // utilisateur. Connexion par pseudo (pas email) : plus simple à retenir.
   import { connecter } from "../stores/utilisateur.js";
 
-  let email = $state("");
+  let pseudo = $state("");
   let motDePasse = $state("");
   let erreur = $state("");
   let enCours = $state(false);
@@ -12,7 +13,7 @@
     erreur = "";
     enCours = true;
     try {
-      await connecter({ email, mot_de_passe: motDePasse });
+      await connecter({ pseudo, mot_de_passe: motDePasse });
     } catch (e) {
       erreur = e.message;
     } finally {
@@ -25,13 +26,13 @@
   <h2>Connexion</h2>
 
   <p>
-    <label for="connexion-email">Email</label>
+    <label for="connexion-pseudo">Pseudo</label>
     <input
-      id="connexion-email"
-      type="email"
-      bind:value={email}
+      id="connexion-pseudo"
+      type="text"
+      bind:value={pseudo}
       required
-      autocomplete="email"
+      autocomplete="username"
     />
   </p>
 

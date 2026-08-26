@@ -1,6 +1,7 @@
 ### Fichier REST Client — ressource /sessions (connexion/déconnexion).
 ### Prérequis : API démarrée + BDD seedée (npm run seed) — utilise le
 ### compte de démo défini dans api/migrations/dataset.json.
+### Connexion par pseudo (pas email) — cf. sessions.controller.js.
 
 @baseUrl = http://localhost:3000
 
@@ -9,7 +10,7 @@ POST {{baseUrl}}/sessions
 Content-Type: application/json
 
 {
-  "email": "demo@example.com",
+  "pseudo": "cubeur_demo",
   "mot_de_passe": "Cube1234!"
 }
 
@@ -18,17 +19,17 @@ POST {{baseUrl}}/sessions
 Content-Type: application/json
 
 {
-  "email": "demo@example.com",
+  "pseudo": "cubeur_demo",
   "mot_de_passe": "un-mauvais-mot-de-passe"
 }
 
-### Connexion — email inconnu (401 attendu, même message que mot de passe
+### Connexion — pseudo inconnu (401 attendu, même message que mot de passe
 ### faux : pas d'énumération de comptes, cf. sessions.controller.js)
 POST {{baseUrl}}/sessions
 Content-Type: application/json
 
 {
-  "email": "personne@example.com",
+  "pseudo": "personne-nexiste",
   "mot_de_passe": "MotDePasse123"
 }
 

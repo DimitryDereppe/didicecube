@@ -12,7 +12,10 @@ export const schemaInscription = Joi.object({
   mot_de_passe: Joi.string().min(8).max(128).required(),
 });
 
+// Connexion par pseudo (pas email) : plus simple à retenir/saisir pour
+// l'utilisateur — l'email reste demandé à l'inscription (identifiant de
+// contact), mais n'est pas requis pour se reconnecter ensuite.
 export const schemaConnexion = Joi.object({
-  email: Joi.string().email().required(),
+  pseudo: Joi.string().required(),
   mot_de_passe: Joi.string().required(),
 });
