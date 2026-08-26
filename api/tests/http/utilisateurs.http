@@ -1,0 +1,45 @@
+### Fichier REST Client (extension VS Code humao.rest-client) — ressource /utilisateurs.
+### Prérequis : API démarrée (npm run dev) + BDD migrée/seedée (npm run migrate && npm run seed).
+### Le cookie de session posé par une réponse est automatiquement réutilisé par
+### les requêtes suivantes de ce fichier (cookie jar de l'extension).
+
+@baseUrl = http://localhost:3000
+
+### Inscription — cas nominal (201 attendu, connecte automatiquement)
+POST {{baseUrl}}/utilisateurs
+Content-Type: application/json
+
+{
+  "email": "test@example.com",
+  "pseudo": "testeur",
+  "mot_de_passe": "MotDePasse123"
+}
+
+### Inscription — email déjà utilisé (409 attendu)
+POST {{baseUrl}}/utilisateurs
+Content-Type: application/json
+
+{
+  "email": "test@example.com",
+  "pseudo": "un-autre-pseudo",
+  "mot_de_passe": "MotDePasse123"
+}
+
+### Inscription — données invalides : email non valide, pseudo trop court,
+### mot de passe trop court (400 attendu avec le détail des 3 erreurs)
+POST {{baseUrl}}/utilisateurs
+Content-Type: application/json
+
+{
+  "email": "pas-un-email",
+  "pseudo": "x",
+  "mot_de_passe": "court"
+}
+
+### Qui suis-je — avec le cookie posé par l'inscription ci-dessus (200 attendu)
+GET {{baseUrl}}/utilisateurs/moi
+
+### Qui suis-je — sans cookie (401 attendu). Pour tester ce cas précisément,
+### supprimer le cookie manuellement (palette de commandes VS Code :
+### "Rest Client: Clear Cookies for Host") avant de relancer cette requête.
+GET {{baseUrl}}/utilisateurs/moi

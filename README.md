@@ -77,7 +77,10 @@ JWT, dossier de stockage des fichiers téléchargés (skins/photos).
   modèles Sequelize (`api/models/`).
 - `npm run seed` — réinitialise la BDD avec des données de démo
   (`api/migrations/dataset.json`).
-- `npm test` — lance les tests.
+- `npm test` — lance les tests unitaires (`api/tests/*.test.js`). Les
+  routes se testent manuellement via les fichiers `api/tests/http/*.http`
+  (extension VS Code [REST Client](https://marketplace.visualstudio.com/items?itemName=humao.rest-client)) —
+  détail dans [api/tests/README.md](api/tests/README.md).
 
 ### `client/`
 
@@ -92,6 +95,7 @@ didicecube/
 │   ├── docs/           # Dictionnaire de données, MCD, MLD (Merise)
 │   ├── models/         # Modèles Sequelize (MPD)
 │   ├── migrations/     # Création des tables + seed de démo
+│   ├── tests/          # Tests unitaires (node:test) + .http (REST Client)
 │   └── package.json
 ├── client/             # Frontend Svelte + Vite
 │   └── package.json

@@ -1,0 +1,63 @@
+### Fichier REST Client — ressource /progressions (protégée : se connecter
+### d'abord). Utilise la fonctionnalité "Request Variables" de l'extension
+### (# @name + {{nom.response.body.$.champ}}) pour enchaîner sans copier
+### l'id à la main.
+
+@baseUrl = http://localhost:3000
+@etatCube = BJROVLBJROVLBJROVLBJROVLBJROVLBJROVLBJROVLBJROVLBJROVL
+
+### 0) Se connecter (compte de démo — nécessaire pour tout ce qui suit)
+POST {{baseUrl}}/sessions
+Content-Type: application/json
+
+{
+  "email": "demo@example.com",
+  "mot_de_passe": "Cube1234!"
+}
+
+### 1) Sans connexion : rejouer cette requête après "Rest Client: Clear
+### Cookies for Host" pour vérifier le 401.
+GET {{baseUrl}}/progressions
+
+### 2) Créer une progression (201 attendu)
+# @name creation
+POST {{baseUrl}}/progressions
+Content-Type: application/json
+
+{
+  "etat_depart": "{{etatCube}}"
+}
+
+### 3) Créer — etat_depart invalide, pas 54 caractères (400 attendu)
+POST {{baseUrl}}/progressions
+Content-Type: application/json
+
+{
+  "etat_depart": "trop court"
+}
+
+### 4) Lister mes progressions (200 attendu, contient celle créée en 2)
+GET {{baseUrl}}/progressions
+
+### 5) Récupérer la progression créée en 2 (200 attendu)
+GET {{baseUrl}}/progressions/{{creation.response.body.$.id}}
+
+### 6) Mettre à jour l'étape courante (200 attendu, date_maj rafraîchie)
+PATCH {{baseUrl}}/progressions/{{creation.response.body.$.id}}
+Content-Type: application/json
+
+{
+  "etape_courante": 12
+}
+
+### 7) Id non numérique dans l'URL (400 attendu)
+GET {{baseUrl}}/progressions/abc
+
+### 8) Id inexistant, ou appartenant à un autre compte (404 attendu)
+GET {{baseUrl}}/progressions/999999
+
+### 9) Supprimer la progression créée en 2 (204 attendu)
+DELETE {{baseUrl}}/progressions/{{creation.response.body.$.id}}
+
+### 10) Vérifier la suppression (404 attendu)
+GET {{baseUrl}}/progressions/{{creation.response.body.$.id}}
