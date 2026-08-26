@@ -22,8 +22,12 @@ export async function inscrire(req, res, next) {
       where: { [Op.or]: [{ email }, { pseudo }] },
     });
     if (dejaExistant) {
-      const champ = dejaExistant.email === email ? "email" : "pseudo";
-      return res.status(409).json({ message: `Ce ${champ} est déjà utilisé.` });
+      // Message volontairement vague : ne pas révéler si c'est l'email ou
+      // le pseudo qui est déjà pris (énumération de comptes) — même
+      // logique que la connexion, cf. sessions.controller.js. Le détail
+      // reste dans les logs serveur pour le débogage.
+      console.error("Inscription refusée : email ou pseudo déjà utilisé", { email, pseudo });
+      return res.status(409).json({ message: "Un compte existe déjà avec ces informations." });
     }
 
     const utilisateur = await Utilisateur.create({
