@@ -58,3 +58,24 @@ export function versEtatDepart(cube) {
     "",
   );
 }
+
+// Inverse de COULEURS[x].code -> x, pour reconstruire un état en mémoire
+// depuis la chaîne stockée en base (ex. en rechargeant une progression).
+const COULEUR_PAR_CODE = Object.fromEntries(
+  Object.entries(COULEURS).map(([nom, info]) => [info.code, nom]),
+);
+
+/**
+ * Convertit une chaîne de 54 caractères (etat_depart, venant de l'API) en
+ * état de cube en mémoire — inverse de versEtatDepart().
+ */
+export function depuisEtatDepart(chaine) {
+  const cube = {};
+  FACES.forEach((face, i) => {
+    cube[face] = chaine
+      .slice(i * 9, i * 9 + 9)
+      .split("")
+      .map((code) => COULEUR_PAR_CODE[code]);
+  });
+  return cube;
+}

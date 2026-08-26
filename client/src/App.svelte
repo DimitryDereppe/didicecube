@@ -6,8 +6,10 @@
   import FormulaireConnexion from "./lib/components/FormulaireConnexion.svelte";
   import FormulaireInscription from "./lib/components/FormulaireInscription.svelte";
   import SaisieCube from "./lib/components/SaisieCube.svelte";
+  import MesProgressions from "./lib/components/MesProgressions.svelte";
 
   let ongletActif = $state("connexion"); // "connexion" | "inscription"
+  let etatDepartCharge = $state(null); // chaîne de 54 caractères chargée depuis "Mes cubes enregistrés"
 
   onMount(() => {
     verifierSession();
@@ -27,7 +29,8 @@
       Connecté en tant que <strong>{$utilisateurConnecte.pseudo}</strong>
       <button type="button" onclick={deconnecter}>Se déconnecter</button>
     </p>
-    <SaisieCube />
+    <SaisieCube etatInitial={etatDepartCharge} />
+    <MesProgressions onCharger={(etat) => (etatDepartCharge = etat)} />
   {:else}
     <section aria-label="Authentification">
       <div class="bascule" role="group" aria-label="Choix du formulaire">

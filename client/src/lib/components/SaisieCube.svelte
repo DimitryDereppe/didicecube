@@ -2,15 +2,33 @@
   // Écran de saisie de l'état de départ du cube : palette de couleurs,
   // cube 3D interactif, sélection de la face active, sauvegarde en
   // progression (API) une fois terminé.
-  import { FACES, NOMS_FACES, COULEURS, creerCubeResolu, versEtatDepart } from "../cube.js";
+  import {
+    FACES,
+    NOMS_FACES,
+    COULEURS,
+    creerCubeResolu,
+    versEtatDepart,
+    depuisEtatDepart,
+  } from "../cube.js";
   import Cube3D from "./Cube3D.svelte";
-  import { api } from "../api.js";
+  import { creerProgression } from "../stores/progressions.js";
+
+  // etatInitial : chaîne de 54 caractères à charger (ex. depuis
+  // MesProgressions), ou null pour repartir d'un cube résolu.
+  let { etatInitial = null } = $props();
 
   let cube = $state(creerCubeResolu());
   let faceActive = $state("F");
   let couleurSelectionnee = $state("blanc");
   let message = $state("");
   let enregistrementEnCours = $state(false);
+
+  // Recharge le cube dès que etatInitial change (chargement d'une
+  // progression sauvegardée) — les modifications locales ensuite
+  // (peindreSticker) ne remontent pas vers etatInitial, pas de boucle.
+  $effect(() => {
+    cube = etatInitial ? depuisEtatDepart(etatInitial) : creerCubeResolu();
+  });
 
   function peindreSticker(face, index) {
     cube[face][index] = couleurSelectionnee;
@@ -25,7 +43,7 @@
     message = "";
     enregistrementEnCours = true;
     try {
-      await api.post("/progressions", { etat_depart: versEtatDepart(cube) });
+      await creerProgression(versEtatDepart(cube));
       message = "État du cube enregistré !";
     } catch (e) {
       message = e.message;
