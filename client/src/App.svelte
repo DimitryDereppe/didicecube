@@ -5,6 +5,7 @@
   import { utilisateurConnecte, verifierSession, deconnecter } from "./lib/stores/utilisateur.js";
   import FormulaireConnexion from "./lib/components/FormulaireConnexion.svelte";
   import FormulaireInscription from "./lib/components/FormulaireInscription.svelte";
+  import SaisieCube from "./lib/components/SaisieCube.svelte";
 
   let ongletActif = $state("connexion"); // "connexion" | "inscription"
 
@@ -22,10 +23,11 @@
   {#if $utilisateurConnecte === undefined}
     <p>Chargement…</p>
   {:else if $utilisateurConnecte}
-    <section aria-labelledby="compte-titre">
-      <h2 id="compte-titre">Bienvenue, {$utilisateurConnecte.pseudo}</h2>
+    <p class="compte">
+      Connecté en tant que <strong>{$utilisateurConnecte.pseudo}</strong>
       <button type="button" onclick={deconnecter}>Se déconnecter</button>
-    </section>
+    </p>
+    <SaisieCube />
   {:else}
     <section aria-label="Authentification">
       <div class="bascule" role="group" aria-label="Choix du formulaire">

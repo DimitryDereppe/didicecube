@@ -4,8 +4,17 @@
 import { writable } from "svelte/store";
 import { api } from "../api.js";
 
+/**
+ * @typedef {object} Utilisateur
+ * @property {number} id
+ * @property {string} email
+ * @property {string} pseudo
+ * @property {string} date_inscription
+ */
+
 // undefined = session pas encore vérifiée (chargement initial),
-// null = pas connecté, objet = connecté (id, email, pseudo, date_inscription).
+// null = pas connecté, objet = connecté.
+/** @type {import("svelte/store").Writable<Utilisateur|null|undefined>} */
 export const utilisateurConnecte = writable(undefined);
 
 /** Vérifie la session actuelle auprès de l'API — à appeler au chargement de l'app. */
