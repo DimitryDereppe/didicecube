@@ -86,6 +86,9 @@ JWT, dossier de stockage des fichiers téléchargés (skins/photos).
 
 - `npm run dev` — démarre le serveur de développement Vite.
 - `npm run build` — build de production.
+- `npm test` — lance les tests unitaires de la logique pure (état du cube,
+  moteur de mouvements) — détail dans
+  [client/tests/README.md](client/tests/README.md).
 
 ## Structure des dossiers
 
