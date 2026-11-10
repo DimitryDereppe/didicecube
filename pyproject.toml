@@ -1,0 +1,9 @@
+# Réglages de ruff (vérification du code Python) : ruff check .
+[tool.ruff]
+line-length = 130
+extend-exclude = ["*/migrations/*"]
+
+[tool.ruff.lint]
+# E/W : style ; F : erreurs (variables inutilisées, noms inconnus) ; I : ordre des imports ;
+# B : pièges courants ; DJ : bonnes pratiques Django.
+select = ["E", "W", "F", "I", "B", "DJ"]

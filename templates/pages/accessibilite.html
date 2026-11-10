@@ -1,0 +1,55 @@
+{% extends "base.html" %}
+{% block titre %}Déclaration d'accessibilité — {{ SITE_NOM }}{% endblock %}
+{% block contenu %}
+  <h1>Déclaration d'accessibilité</h1>
+  {# Modèle du RGAA 4.1. Les passages « À compléter » sont à remplir après l'audit. #}
+  <p>{{ SITE_NOM }} veut que son site puisse être utilisé par tout le monde, y compris par les personnes en
+     situation de handicap : vue, audition, motricité ou compréhension.</p>
+
+  <h2>État de conformité</h2>
+  <p>Le site vise le niveau AA des règles internationales d'accessibilité (WCAG 2.2), vérifié avec la grille
+     française du RGAA 4.1.</p>
+  <p>À compléter après l'audit. Tant qu'aucun audit n'est fait, le site est déclaré <strong>non conforme</strong>
+     au RGAA 4.1. Ensuite : « totalement conforme », « partiellement conforme » ou « non conforme ».</p>
+
+  <h2>Résultats des tests</h2>
+  <p>À compléter : taux de critères respectés ; nombre de critères conformes, non conformes et non applicables.</p>
+
+  <h2>Contenus non accessibles</h2>
+  <p>À compléter : défauts connus, contenus non soumis à l'obligation, dérogations éventuelles et leur raison.</p>
+
+  <h2>Réglages proposés sur chaque page</h2>
+  <p>Le bouton « Accessibilité », sur le bord gauche de l'écran, ouvre un panneau de réglages :</p>
+  <ul>
+    <li>taille du texte, de 100 à 200 % ;</li>
+    <li>contraste renforcé ;</li>
+    <li>affichage en niveau de gris ;</li>
+    <li>liens soulignés ;</li>
+    <li>police plus lisible, sans italique ;</li>
+    <li>texte plus espacé ;</li>
+    <li>arrêt des animations.</li>
+  </ul>
+  <p>Vos réglages sont gardés dans votre navigateur et s'appliquent à chaque page. Ils ne sont jamais envoyés
+     au site. Le bouton « Tout réinitialiser » les efface. Le zoom du navigateur fonctionne aussi partout.</p>
+
+  <h2>Établissement de cette déclaration</h2>
+  <ul>
+    <li>Date : à compléter.</li>
+    <li>Technologies utilisées : HTML, CSS, JavaScript.</li>
+    <li>Navigateurs, lecteurs d'écran et outils de test : à compléter.</li>
+    <li>Pages vérifiées : à compléter.</li>
+  </ul>
+
+  <h2>Signaler un problème</h2>
+  <p>Si vous n'arrivez pas à utiliser une page ou un service du site, écrivez-nous : nous vous proposerons une
+     autre façon d'obtenir l'information ou le service. Contact : à compléter (e-mail, téléphone).</p>
+
+  <h2>Si vous n'obtenez pas de réponse</h2>
+  <p>Vous pouvez vous adresser au Défenseur des droits :</p>
+  <ul>
+    <li>par le formulaire en ligne sur <a href="https://www.defenseurdesdroits.fr">defenseurdesdroits.fr</a> ;</li>
+    <li>auprès d'un délégué près de chez vous (liste sur le même site) ;</li>
+    <li>par téléphone au 09 69 39 00 00 ;</li>
+    <li>par courrier, sans timbre : Défenseur des droits, Libre réponse 71120, 75342 Paris CEDEX 07.</li>
+  </ul>
+{% endblock %}

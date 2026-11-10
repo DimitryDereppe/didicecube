@@ -1,0 +1,22 @@
+{% extends "base.html" %}
+{% block titre %}Mes progressions · {{ SITE_NOM }}{% endblock %}
+{% block contenu %}
+  <h1>Mes progressions</h1>
+  {% if progressions %}
+    <ul class="liste-cartes">
+      {% for p in progressions %}
+        <li class="carte">
+          <p><strong>{{ p }}</strong><br>Mouvement atteint : {{ p.etape_courante }}</p>
+          <a class="bouton" href="{% url 'cube:atelier' %}?progression={{ p.id }}">Reprendre</a>
+          <form method="post" action="{% url 'cube:progression_supprimer' p.id %}" class="en-ligne">
+            {% csrf_token %}
+            <button type="submit" class="bouton bouton--danger" aria-label="Supprimer la {{ p|lower }}">Supprimer</button>
+          </form>
+        </li>
+      {% endfor %}
+    </ul>
+  {% else %}
+    <p>Aucune progression enregistrée. <a href="{% url 'cube:atelier' %}">Saisir un cube</a>, le résoudre,
+      puis choisir « Enregistrer ma progression ».</p>
+  {% endif %}
+{% endblock %}

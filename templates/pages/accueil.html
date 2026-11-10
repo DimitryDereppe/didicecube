@@ -1,0 +1,25 @@
+{% extends "base.html" %}
+{% block contenu %}
+  <h1>{{ SITE_NOM }}</h1>
+  <p>Indiquez les couleurs de votre Rubik's Cube, à la main ou en le prenant en photo, et obtenez sa
+    résolution : expliquée étape par étape, rejouée mouvement par mouvement, ou en lecture continue.</p>
+  <p><a class="bouton" href="{% url 'cube:atelier' %}">Résoudre mon cube</a></p>
+
+  <h2>Comment ça marche ?</h2>
+  <ol>
+    <li><strong>Saisie</strong> : choisissez une couleur, puis cliquez sur les cases du patron ou du cube en 3D.
+      Vous pouvez aussi photographier chaque face : les couleurs sont détectées dans votre navigateur,
+      la photo n'est jamais envoyée.</li>
+    <li><strong>Résolution</strong> : la méthode « couche par couche », celle des débutants : la croix du bas,
+      la première couronne, la deuxième, puis la dernière couche.</li>
+    <li><strong>Lecture</strong> : avancez d'un mouvement à la fois ou lancez la lecture automatique.</li>
+  </ol>
+  <p>Avec un compte, vous pouvez enregistrer votre progression pour la reprendre plus tard, et habiller le cube
+    avec vos propres images (skins).</p>
+
+  <h2>Notation des mouvements</h2>
+  <p>Chaque lettre désigne une face, tournée d'un quart de tour dans le sens des aiguilles d'une montre
+    quand on la regarde en face : <strong>U</strong> dessus, <strong>D</strong> dessous, <strong>L</strong> gauche,
+    <strong>R</strong> droite, <strong>F</strong> avant, <strong>B</strong> arrière. Une apostrophe (R') tourne
+    dans l'autre sens, un 2 (R2) fait un demi-tour.</p>
+{% endblock %}

@@ -1,0 +1,4 @@
+# Usage : outils de vérification, installés dans l'image de développement seulement (voir outils/verifie.sh).
+-r requirements.txt
+ruff==0.17.4
+pip-audit==2.10.1

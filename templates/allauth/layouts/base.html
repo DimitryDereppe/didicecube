@@ -1,0 +1,12 @@
+{% extends "base.html" %}
+{% comment %}
+  Habille toutes les pages de django-allauth (connexion, mot de passe oublié, double authentification…)
+  avec la mise en page du site : en-tête, messages, pied de page, onglet Accessibilité.
+  Les pages d'allauth remplissent head_title, extra_head, content et extra_body.
+{% endcomment %}
+{% block titre %}{% block head_title %}{% endblock head_title %} — {{ SITE_NOM }}{% endblock titre %}
+{% block tete %}{% block extra_head %}{% endblock extra_head %}{% endblock tete %}
+{% block contenu %}
+  {% block content %}{% endblock content %}
+  {% block extra_body %}{% endblock extra_body %}
+{% endblock contenu %}

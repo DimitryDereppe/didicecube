@@ -1,0 +1,29 @@
+{% extends "base.html" %}
+{% block titre %}Mon compte — {{ SITE_NOM }}{% endblock %}
+{% block contenu %}
+  <h1>Mon compte</h1>
+  <p>Connecté avec <strong>{{ user.email }}</strong>.</p>
+
+  <h2>Sécurité</h2>
+  <ul>
+    <li><a href="{% url 'account_change_password' %}">Changer mon mot de passe</a></li>
+    {% if double_auth_active %}
+      <li>
+        Double authentification : <strong>activée</strong>{% if double_auth_obligatoire %} (obligatoire pour votre compte){% endif %},
+        avec {% if cle_securite %}une clé de sécurité{% if application %} et {% endif %}{% endif %}{% if application %}une application d'authentification{% endif %}.
+      </li>
+      {% if not cle_securite %}
+        <li>Conseil : ajoutez une clé de sécurité ou une passkey, plus sûre qu'un code à 6 chiffres contre l'hameçonnage.</li>
+      {% endif %}
+      <li><a href="{% url 'mfa_index' %}">Gérer la double authentification</a> (clés, application, codes de secours)</li>
+    {% else %}
+      <li><a href="{% url 'mfa_index' %}">Activer la double authentification</a> (recommandé : une clé de sécurité ou une passkey)</li>
+    {% endif %}
+  </ul>
+
+  <h2>Mes données</h2>
+  <ul>
+    <li><a href="{% url 'comptes:export_donnees' %}">Télécharger toutes mes données (fichier JSON)</a></li>
+    <li><a href="{% url 'comptes:supprimer_compte' %}">Supprimer mon compte</a></li>
+  </ul>
+{% endblock %}

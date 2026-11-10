@@ -1,0 +1,18 @@
+# Image de production : gunicorn, sans outils de développement, code en lecture seule pour l'application.
+# Construite par docker-compose.prod.yml.
+FROM python:3.14-slim
+
+ENV PYTHONDONTWRITEBYTECODE=1 PYTHONUNBUFFERED=1
+
+WORKDIR /app
+COPY requirements.txt .
+RUN pip install --no-cache-dir -r requirements.txt
+
+COPY . .
+
+# Le code appartient à root : l'application peut le lire, pas le modifier. Seul staticfiles/ lui est ouvert.
+RUN useradd --create-home appli && mkdir -p staticfiles media && chown appli staticfiles media
+USER appli
+
+EXPOSE 8000
+CMD ["sh", "outils/demarre-production.sh"]

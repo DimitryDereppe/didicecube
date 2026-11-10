@@ -5,9 +5,6 @@ Site de résolution de Rubik's Cube : indiquez l'état de départ de votre cube
 avec des skins, et obtenez la solution — expliquée à l'écrit, rejouée
 visuellement étape par étape, ou en lecture continue.
 
-> 🚧 Projet en cours de démarrage — ce README sera complété au fil de
-> l'avancement.
-
 ## Fonctionnalités
 
 - **Saisie du cube en 3D** : une interface visuelle (cube rendu en CSS 3D)
@@ -24,94 +21,52 @@ visuellement étape par étape, ou en lecture continue.
 - **Résolution en continu** : lecture automatique et animée de la résolution
   complète.
 - **Compte utilisateur** : enregistre l'état de départ du cube et la
-  progression, pour reprendre une résolution plus tard.
+  progression, pour reprendre une résolution plus tard ; export et
+  suppression de ses données (RGPD).
 
-## Stack
+## Pile technique
 
-Stack enseignée par O'Clock, en deux parties :
+Bâti sur le **gabarit Django du socle commun** (`socle-commun/gabarit-django`) :
+Django 5.2, PostgreSQL 17, django-allauth (connexion par email, double
+authentification), journal d'accès, droits RGPD, onglet Accessibilité, Docker.
 
-- **`api/`** — Node.js/Express (API REST), PostgreSQL via Sequelize (modèles,
-  associations, migrations/seed), Argon2 (mots de passe), JWT (sessions),
-  Joi (validation), `multer` (upload de skins/photos).
-- **`client/`** — Svelte + Vite. Cube rendu en CSS 3D (pas de librairie 3D
-  externe). Algorithme de résolution codé à la main (méthode couche par
-  couche).
+- **`cube/moteur.py`** : les 18 mouvements, calculés à partir de la position 3D
+  de chaque sticker. Le navigateur reçoit ces mêmes permutations.
+- **`cube/resolution.py`** : résolution couche par couche (méthode débutant),
+  écrite à la main, avec une explication par pièce placée. Détecte les états
+  impossibles (pièce retournée, coin tourné, deux pièces échangées).
+- **`cube/`** : progressions, skins (images privées, servies au seul
+  propriétaire), pages et appels JSON.
+- **`static/js/cube.js`** : patron, cube 3D en CSS (sans bibliothèque), photo
+  (couleurs détectées dans le navigateur, photos jamais envoyées), lecture pas
+  à pas ou continue.
 
-## Prérequis
+La première version (API Express + client Svelte) reste dans l'historique git.
 
-- [Node.js](https://nodejs.org/) (version LTS recommandée)
-- npm (fourni avec Node.js)
-- [PostgreSQL](https://www.postgresql.org/) (pour les comptes/progression)
-
-## Installation
+## Démarrer
 
 ```bash
-git clone <url-du-dépôt>
-cd didicecube
-
-# API
-cd api
-npm install
-cp .env.example .env   # puis renseigner ses propres identifiants PostgreSQL
-npm run migrate        # crée les tables à partir des modèles Sequelize
-npm run seed           # (optionnel) données de démo — écrase la BDD existante
-
-# Client (dans un autre terminal)
-cd ../client
-npm install
+cp .env.example .env   # remplir SECRET_KEY, MFA_CLES_CHIFFREMENT, DB_PASSWORD
+docker compose up --build
+docker compose exec web python manage.py createsuperuser
 ```
 
-## Variables d'environnement
+Le site est sur http://localhost:8000 (port réglable : `WEB_PORT_HOTE`).
+En développement, les emails (confirmation d'adresse) s'affichent dans
+`docker compose logs web`.
 
-Voir [api/.env.example](api/.env.example) : port du serveur, connexion
-PostgreSQL (`PGHOST`/`PGPORT`/`PGDATABASE`/`PGUSER`/`PGPASSWORD`), secret
-JWT, dossier de stockage des fichiers téléchargés (skins/photos).
+## Vérifier
 
-## Scripts disponibles
-
-### `api/`
-
-- `npm run dev` — démarre le serveur avec rechargement automatique (nodemon).
-- `npm start` — démarre le serveur.
-- `npm run migrate` — crée/synchronise les tables PostgreSQL à partir des
-  modèles Sequelize (`api/models/`).
-- `npm run seed` — réinitialise la BDD avec des données de démo
-  (`api/migrations/dataset.json`).
-- `npm test` — lance les tests unitaires (`api/tests/*.test.js`). Les
-  routes se testent manuellement via les fichiers `api/tests/http/*.http`
-  (extension VS Code [REST Client](https://marketplace.visualstudio.com/items?itemName=humao.rest-client)) —
-  détail dans [api/tests/README.md](api/tests/README.md).
-
-### `client/`
-
-- `npm run dev` — démarre le serveur de développement Vite.
-- `npm run build` — build de production.
-- `npm test` — lance les tests unitaires de la logique pure (état du cube,
-  moteur de mouvements) — détail dans
-  [client/tests/README.md](client/tests/README.md).
-
-## Structure des dossiers
-
-```
-didicecube/
-├── api/                # Backend Express (API REST)
-│   ├── docs/           # Dictionnaire de données, MCD, MLD (Merise)
-│   ├── models/         # Modèles Sequelize (MPD)
-│   ├── migrations/     # Création des tables + seed de démo
-│   ├── tests/          # Tests unitaires (node:test) + .http (REST Client)
-│   └── package.json
-├── client/             # Frontend Svelte + Vite
-│   └── package.json
-└── README.md
+```bash
+outils/verifie.sh          # ruff, tests, check --deploy, pip-audit
+outils/verifie.sh rapide   # ruff + tests
 ```
 
-*(à compléter au fur et à mesure de la mise en place de l'architecture)*
+## Mise en production
 
-## Déploiement
+Voir le README du gabarit Django (Caddy + gunicorn, sauvegardes). Les images
+des skins sont dans le volume `medias` : à inclure dans les sauvegardes.
 
-Le site est destiné à être déployé sur le serveur **Aldebaran** et accessible
-depuis le réseau local.
+## Documents
 
-## Licence
-
-ISC
+Conception Merise dans [docs/conception/](docs/conception/).

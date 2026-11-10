@@ -1,0 +1,42 @@
+/* Styles minimaux et accessibles du socle. Chaque projet les remplace par sa charte graphique.
+   Contrastes vérifiés WCAG 2.2 AA (outils/contraste.py du socle). */
+:root {
+  --fond: #ffffff;
+  --texte: #1f2328;
+  --accent: #1a5fb4;
+  --danger: #a51d2d;
+  --bordure: #6e7781;
+  --focus: #1a5fb4;
+}
+@media (prefers-color-scheme: dark) {
+  :root {
+    --fond: #16181b;
+    --texte: #e6e8eb;
+    --accent: #8fb8f2;
+    --danger: #f28b8b;
+    --bordure: #9aa3ad;
+    --focus: #8fb8f2;
+  }
+}
+* { box-sizing: border-box; }
+body { margin: 0; font: 1rem/1.5 system-ui, sans-serif; background: var(--fond); color: var(--texte); }
+a { color: var(--accent); }
+:focus-visible { outline: 3px solid var(--focus); outline-offset: 2px; }
+.lien-evitement { position: absolute; left: -9999px; }
+.lien-evitement:focus { left: 1rem; top: 1rem; background: var(--fond); padding: .5rem; }
+.entete, .pied { display: flex; flex-wrap: wrap; gap: 1rem; align-items: center; justify-content: space-between; padding: 1rem; }
+.entete nav, .pied { gap: 1rem; display: flex; flex-wrap: wrap; }
+.entete__nom { font-weight: 700; text-decoration: none; }
+main { max-width: 40rem; margin: 0 auto; padding: 1rem; }
+.champ { margin-bottom: 1rem; display: flex; flex-direction: column; gap: .25rem; }
+input { font: inherit; padding: .5rem; border: 1px solid var(--bordure); border-radius: 4px; background: var(--fond); color: var(--texte); }
+.bouton { font: inherit; padding: .5rem 1rem; border: 0; border-radius: 4px; background: var(--accent); color: var(--fond); cursor: pointer; }
+.bouton--danger { background: var(--danger); }
+.bouton-lien { font: inherit; background: none; border: 0; padding: 0; color: var(--accent); text-decoration: underline; cursor: pointer; }
+.en-ligne { display: inline; }
+.erreur, .erreurs { color: var(--danger); }
+.aide { font-size: .9rem; }
+/* Double authentification : QR code sur fond blanc (lisible aussi en mode sombre), clé et codes en police fixe. */
+.qr-code svg { background: #fff; padding: .5rem; max-width: 100%; height: auto; }
+.cle, .codes-secours code { font-family: ui-monospace, monospace; font-size: 1.1rem; word-break: break-all; }
+.codes-secours { columns: 2; list-style: none; padding: 0; }

@@ -1,0 +1,106 @@
+{% extends "base.html" %}
+{% load static %}
+{% block titre %}Résoudre un cube · {{ SITE_NOM }}{% endblock %}
+{% block tete %}
+  <link rel="stylesheet" href="{% static 'css/cube.css' %}">
+  <script src="{% static 'js/cube.js' %}" defer></script>
+{% endblock %}
+{% block contenu %}
+  {{ donnees|json_script:"donnees-cube" }}
+  {% csrf_token %}
+  <h1>Résoudre un cube</h1>
+  <noscript><p class="erreur">Cette page a besoin de JavaScript pour afficher et résoudre le cube.</p></noscript>
+
+  <div class="atelier">
+    <section aria-labelledby="titre-saisie" class="atelier__saisie">
+      <h2 id="titre-saisie">1. Saisir les couleurs</h2>
+      <p class="aide">Choisissez une couleur, puis cliquez sur les cases du patron (les six faces dépliées)
+        ou sur le cube en 3D. Tenez votre cube avec la face avant vers vous et le dessus en haut.</p>
+      <div class="palette" id="palette" role="group" aria-label="Couleur à appliquer"></div>
+      <div class="patron" id="patron" role="group" aria-label="Patron du cube : les six faces dépliées"></div>
+      <div class="boutons">
+        <button type="button" class="bouton bouton--secondaire" id="cube-resolu">Cube résolu</button>
+        <button type="button" class="bouton bouton--secondaire" id="melanger">Mélanger</button>
+      </div>
+
+      <details class="photo" id="photo">
+        <summary>Détecter les couleurs par photo</summary>
+        <p class="aide">Photographiez les six faces une à une, la face bien dans la grille. Les couleurs sont
+          détectées dans votre navigateur : les photos ne sont jamais envoyées. Vérifiez le résultat ensuite.</p>
+        <div class="champ">
+          <label for="photo-face">Face à photographier</label>
+          <select id="photo-face"></select>
+        </div>
+        <p id="photo-consigne" class="consigne"></p>
+        <div class="boutons">
+          <button type="button" class="bouton bouton--secondaire" id="camera">Activer la caméra</button>
+        </div>
+        <div class="viseur" id="viseur" hidden>
+          <video id="video" playsinline muted></video>
+          <div class="viseur__grille" aria-hidden="true">{% for i in "123456789" %}<span></span>{% endfor %}</div>
+        </div>
+        <div class="boutons">
+          <button type="button" class="bouton" id="capturer" hidden>Prendre cette face</button>
+        </div>
+        <div class="champ">
+          <label for="photo-fichier">Ou choisir une photo de cette face</label>
+          <input type="file" id="photo-fichier" accept="image/*">
+        </div>
+        <p id="photo-etat" role="status"></p>
+      </details>
+    </section>
+
+    <section aria-labelledby="titre-vue" class="atelier__vue">
+      <h2 id="titre-vue">Vue en 3D</h2>
+      <div class="scene" id="scene">
+        <div class="cube3d" id="cube3d" aria-hidden="true"></div>
+      </div>
+      <div class="boutons" role="group" aria-label="Tourner la vue">
+        <button type="button" class="bouton bouton--secondaire" data-vue="0,-90" aria-label="Tourner la vue vers la gauche">←</button>
+        <button type="button" class="bouton bouton--secondaire" data-vue="90,0" aria-label="Tourner la vue vers le haut">↑</button>
+        <button type="button" class="bouton bouton--secondaire" data-vue="-90,0" aria-label="Tourner la vue vers le bas">↓</button>
+        <button type="button" class="bouton bouton--secondaire" data-vue="0,90" aria-label="Tourner la vue vers la droite">→</button>
+        <button type="button" class="bouton bouton--secondaire" data-vue="init">Vue de départ</button>
+      </div>
+      <div class="champ" id="bloc-skin" hidden>
+        <label for="choix-skin">Habillage</label>
+        <select id="choix-skin"><option value="">Couleurs standards</option></select>
+      </div>
+    </section>
+
+    <section aria-labelledby="titre-resolution" class="atelier__resolution">
+      <h2 id="titre-resolution">2. Résoudre</h2>
+      <button type="button" class="bouton" id="resoudre">Résoudre ce cube</button>
+      <p id="message" role="status"></p>
+
+      <div id="lecteur" hidden>
+        <p id="position" class="position"></p>
+        <p id="prochain" class="aide"></p>
+        <div class="boutons" role="group" aria-label="Lecture de la solution">
+          <button type="button" class="bouton bouton--secondaire" id="debut">Début</button>
+          <button type="button" class="bouton bouton--secondaire" id="precedent">Précédent</button>
+          <button type="button" class="bouton" id="suivant">Suivant</button>
+          <button type="button" class="bouton bouton--secondaire" id="fin">Fin</button>
+          <button type="button" class="bouton" id="lecture" aria-pressed="false">Lecture continue</button>
+        </div>
+        <p class="aide">Pendant la lecture, la saisie est bloquée.
+          <button type="button" class="bouton-lien" id="modifier">Modifier les couleurs</button></p>
+        <div class="champ champ--ligne">
+          <label for="vitesse">Vitesse</label>
+          <input type="range" id="vitesse" min="1" max="5" value="2">
+        </div>
+        <div class="boutons">
+          {% if user.is_authenticated %}
+            <button type="button" class="bouton bouton--secondaire" id="enregistrer">Enregistrer ma progression</button>
+          {% else %}
+            <p class="aide"><a href="{% url 'account_login' %}?next={% url 'cube:atelier' %}">Connectez-vous</a>
+              pour enregistrer votre progression.</p>
+          {% endif %}
+        </div>
+        <h3>Solution écrite</h3>
+        <p class="aide">Cliquez sur un mouvement pour y aller directement.</p>
+        <ol class="etapes" id="etapes"></ol>
+      </div>
+    </section>
+  </div>
+{% endblock %}

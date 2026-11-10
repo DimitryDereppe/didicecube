@@ -1,0 +1,11 @@
+# Usage : pip install -r requirements.txt (dans un environnement virtuel .venv)
+# Versions figées : on les monte à la main, après lecture des notes de version.
+Django==5.2.19
+psycopg[binary]==3.3.8
+gunicorn==26.2.0
+argon2-cffi==25.1.0
+# Connexion et double authentification (clé de sécurité / passkey, application, codes de secours)
+django-allauth[mfa]==65.21.1
+# Dépendances du module MFA d'allauth, figées elles aussi
+fido2==2.2.1
+qrcode==8.2

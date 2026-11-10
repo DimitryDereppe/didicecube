@@ -1,0 +1,33 @@
+{% extends "base.html" %}
+{% block titre %}Mes skins · {{ SITE_NOM }}{% endblock %}
+{% block contenu %}
+  <h1>Mes skins</h1>
+  <p>Un skin remplace les couleurs du cube affiché par vos images : une image par couleur, toutes facultatives.
+    Les images restent privées : vous seul(e) les voyez.</p>
+
+  {% if skins %}
+    <ul class="liste-cartes">
+      {% for skin in skins %}
+        <li class="carte">
+          <p><strong>{{ skin.nom_skin }}</strong></p>
+          <ul class="vignettes">
+            {% for image in skin.images.all %}
+              <li><img src="{% url 'cube:image_skin' image.id %}" alt="" width="48" height="48"> {{ image.get_couleur_display }}</li>
+            {% endfor %}
+          </ul>
+          <form method="post" action="{% url 'cube:skin_supprimer' skin.id %}">
+            {% csrf_token %}
+            <button type="submit" class="bouton bouton--danger" aria-label="Supprimer le skin {{ skin.nom_skin }}">Supprimer</button>
+          </form>
+        </li>
+      {% endfor %}
+    </ul>
+  {% endif %}
+
+  <h2>Ajouter un skin</h2>
+  <form method="post" enctype="multipart/form-data" novalidate>
+    {% csrf_token %}
+    {% include "partiels/formulaire.html" %}
+    <button type="submit" class="bouton">Ajouter</button>
+  </form>
+{% endblock %}

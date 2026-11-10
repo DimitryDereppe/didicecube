@@ -1,0 +1,16 @@
+{% extends "base.html" %}
+{% block titre %}Confidentialité — {{ SITE_NOM }}{% endblock %}
+{% block contenu %}
+  <h1>Politique de confidentialité</h1>
+  {# Informations exigées par le RGPD (art. 13). Texte à faire vérifier. #}
+  <h2>Responsable du traitement</h2>
+  <p>À compléter.</p>
+  <h2>Données collectées et finalités</h2>
+  <p>À compléter : quelles données, pourquoi, sur quelle base légale.</p>
+  <h2>Durée de conservation</h2>
+  <p>À compléter. Le journal des accès est conservé un an au plus.</p>
+  <h2>Vos droits</h2>
+  <p>Vous pouvez consulter, télécharger et supprimer vos données depuis la page
+     {% if user.is_authenticated %}<a href="{% url 'comptes:mes_donnees' %}">Mes données</a>{% else %}« Mes données » de votre compte{% endif %}.
+     Vous pouvez aussi saisir la CNIL (cnil.fr).</p>
+{% endblock %}

@@ -1,0 +1,50 @@
+{% load static %}<!doctype html>
+<html lang="fr">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>{% block titre %}{{ SITE_NOM }}{% endblock %}</title>
+  <link rel="stylesheet" href="{% static 'css/base.css' %}">
+  <link rel="stylesheet" href="{% static 'css/accessibilite.css' %}">
+  {# Onglet Accessibilité : sans defer, pour appliquer les réglages du visiteur avant l'affichage. #}
+  <script src="{% static 'js/accessibilite.js' %}" data-declaration="{% url 'pages:accessibilite' %}"></script>
+  {# htmx : déposer htmx.min.js dans static/js/ (voir README), puis décommenter la ligne suivante. #}
+  {# <script src="{% static 'js/htmx.min.js' %}" defer></script> #}
+  {% block tete %}{% endblock %}
+</head>
+<body>
+  <a class="lien-evitement" href="#contenu">Aller au contenu</a>
+  <header class="entete">
+    <a class="entete__nom" href="{% url 'pages:accueil' %}">{{ SITE_NOM }}</a>
+    <nav aria-label="Menu principal">
+      <a href="{% url 'cube:atelier' %}">Résoudre un cube</a>
+      {% if user.is_authenticated %}
+        <a href="{% url 'cube:progressions' %}">Mes progressions</a>
+        <a href="{% url 'cube:skins' %}">Mes skins</a>
+        <a href="{% url 'comptes:mes_donnees' %}">Mon compte</a>
+        <form method="post" action="{% url 'account_logout' %}" class="en-ligne">
+          {% csrf_token %}<button type="submit" class="bouton-lien">Se déconnecter</button>
+        </form>
+      {% else %}
+        <a href="{% url 'account_login' %}">Se connecter</a>
+        {% if INSCRIPTION_OUVERTE %}<a href="{% url 'account_signup' %}">Créer un compte</a>{% endif %}
+      {% endif %}
+    </nav>
+  </header>
+
+  <main id="contenu" tabindex="-1">
+    {% if messages %}
+      <div role="status">
+        {% for message in messages %}<p class="message message--{{ message.tags }}">{{ message }}</p>{% endfor %}
+      </div>
+    {% endif %}
+    {% block contenu %}{% endblock %}
+  </main>
+
+  <footer class="pied">
+    <a href="{% url 'pages:mentions_legales' %}">Mentions légales</a>
+    <a href="{% url 'pages:confidentialite' %}">Confidentialité</a>
+    <a href="{% url 'pages:accessibilite' %}">Accessibilité</a>
+  </footer>
+</body>
+</html>

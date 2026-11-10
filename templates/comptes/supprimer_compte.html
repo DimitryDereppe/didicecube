@@ -1,0 +1,12 @@
+{% extends "base.html" %}
+{% block titre %}Supprimer mon compte — {{ SITE_NOM }}{% endblock %}
+{% block contenu %}
+  <h1>Supprimer mon compte</h1>
+  <p>Cette action efface votre compte et vos données. Elle est définitive.
+     Pensez à <a href="{% url 'comptes:export_donnees' %}">télécharger vos données</a> avant.</p>
+  <form method="post">
+    {% csrf_token %}
+    {% include "partiels/formulaire.html" %}
+    <button type="submit" class="bouton bouton--danger">Supprimer définitivement</button>
+  </form>
+{% endblock %}

@@ -1,21 +1,49 @@
-# Secrets et configuration locale (cf. PROMPT-HEADER-CLAUDE.md section 9)
+# Secrets et configuration locale
 .env
+.env.*
+!.env.example
+!.env.production.example
 
-# Dépendances Node.js
-node_modules
+# Données réelles de test : jamais dans le dépôt
+donnees-reelles/
 
-# Configuration Claude Code (locale à la machine, pas destinée à la vitrine publique)
-.claude
-CLAUDE.md
+# Node
+node_modules/
+dist/
+build/
+coverage/
+*.tsbuildinfo
 
-# Configuration éditeur locale
-.vscode
+# Python
+__pycache__/
+.ruff_cache/
+*.py[cod]
+.venv/
+venv/
+.pytest_cache/
+.coverage
+htmlcov/
+staticfiles/
+media/
 
-# Fichiers uploadés par les utilisateurs (skins, photos de face du cube)
-uploads
+# Journaux et fichiers temporaires
+*.log
+tmp/
+*.tmp
 
-# Fichiers système
+# Système et éditeurs
 .DS_Store
+Thumbs.db
+.vscode/*
+!.vscode/extensions.json
+.idea/
+*.swp
 
-# Carnet de bord, pas besoin qu'il soit public
+# Sauvegardes de la base (données personnelles)
+sauvegardes/
+
+# Fichiers de travail locaux : hors du dépôt
+CLAUDE.md
 CARNET-DE-BORD-DIDICECUBE.md
+.claude/
+.playwright-mcp/

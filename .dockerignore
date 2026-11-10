@@ -1,0 +1,8 @@
+.env
+.venv/
+__pycache__/
+staticfiles/
+donnees-reelles/
+.git/
+sauvegardes/
+.ruff_cache/

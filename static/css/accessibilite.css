@@ -1,0 +1,78 @@
+/* Onglet « Accessibilité » (static/js/accessibilite.js), sur chaque page. Socle commun.
+   Chaque projet adapte les variables --a11y-* à sa charte (dans sa propre feuille, chargée après celle-ci)
+   et complète html.a11y-contraste avec ses couleurs. Contrastes à vérifier avec outils/contraste.py. */
+:root {
+  --a11y-onglet-fond: var(--accent);     /* onglet */
+  --a11y-onglet-texte: var(--fond);
+  --a11y-panneau-fond: var(--fond);      /* panneau */
+  --a11y-panneau-texte: var(--texte);
+  --a11y-bouton: var(--accent);          /* boutons du panneau, actifs en plein */
+  --a11y-reinitialiser: var(--danger);
+  --a11y-haut: 6rem;                     /* ordinateur : hauteur de l'onglet, sous l'en-tête */
+}
+
+.a11y-cache { position: absolute; width: 1px; height: 1px; overflow: hidden; clip-path: inset(50%); white-space: nowrap; }
+
+.a11y-onglet {
+  position: fixed; left: 0; bottom: 1rem; z-index: 70;  /* mobile : en bas à gauche */
+  display: flex; flex-direction: column; align-items: center; gap: .4rem;
+  min-width: 48px; min-height: 48px; padding: .6rem .5rem;
+  background: var(--a11y-onglet-fond); color: var(--a11y-onglet-texte);
+  border: 2px solid var(--a11y-onglet-texte); border-left: 0; border-radius: 0 12px 12px 0;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, .2); cursor: pointer; font: inherit;
+}
+.a11y-libelle { position: absolute; width: 1px; height: 1px; overflow: hidden; clip-path: inset(50%); white-space: nowrap; }
+@media (min-width: 64rem) {
+  .a11y-onglet { bottom: auto; top: var(--a11y-haut); }  /* ordinateur : onglet latéral, mot écrit verticalement */
+  .a11y-libelle { position: static; width: auto; height: auto; overflow: visible; clip-path: none;
+    writing-mode: vertical-rl; transform: rotate(180deg); font-size: .8rem; font-weight: 600; letter-spacing: .04em; }
+}
+
+.a11y-panneau {
+  position: fixed; z-index: 71; bottom: 1rem; left: .5rem; right: .5rem;
+  max-height: calc(100vh - 2rem); max-height: calc(100dvh - 2rem); overflow: auto; padding: 1.25rem;
+  background: var(--a11y-panneau-fond); color: var(--a11y-panneau-texte);
+  border: 2px solid var(--a11y-onglet-fond); border-radius: 12px; box-shadow: 0 4px 16px rgba(0, 0, 0, .25);
+}
+.a11y-panneau[hidden] { display: none; }
+@media (min-width: 40rem) { .a11y-panneau { left: 4rem; right: auto; width: 22rem; } }
+@media (min-width: 64rem) {
+  .a11y-panneau { bottom: auto; top: var(--a11y-haut); max-height: calc(100vh - var(--a11y-haut) - 1rem); max-height: calc(100dvh - var(--a11y-haut) - 1rem); }
+}
+.a11y-tete { display: flex; align-items: center; justify-content: space-between; gap: 1rem; margin-bottom: 1rem; }
+.a11y-tete h2 { margin: 0; font-size: 1.3rem; }
+.a11y-tete h2:focus { outline: none; }  /* focus posé par le script à l'ouverture, pas un élément actif */
+.a11y-panneau button {
+  min-height: 48px; padding: .5rem 1rem; font: inherit; font-weight: 600; cursor: pointer;
+  color: var(--a11y-bouton); background: var(--a11y-panneau-fond); border: 2px solid var(--a11y-bouton); border-radius: 10px;
+}
+.a11y-panneau button:disabled { opacity: .45; cursor: not-allowed; }
+.a11y-groupe { margin: 0 0 .5rem; font-weight: 600; }
+.a11y-taille { display: flex; align-items: center; gap: 1rem; margin-bottom: 1.25rem; }
+.a11y-taille output { min-width: 4ch; text-align: center; font-weight: 600; }
+.a11y-options { list-style: none; margin: 0 0 1rem; padding: 0; display: grid; gap: .5rem; }
+.a11y-options button { width: 100%; text-align: left; display: flex; justify-content: space-between; gap: .5rem; }
+.a11y-options button::after { content: "Non"; font-weight: 400; }
+.a11y-options button[aria-pressed="true"] { background: var(--a11y-bouton); color: var(--a11y-panneau-fond); }
+.a11y-options button[aria-pressed="true"]::after { content: "Oui"; }
+.a11y-panneau .a11y-reinitialiser { width: 100%; border-color: var(--a11y-reinitialiser); color: var(--a11y-reinitialiser); }
+.a11y-pied { margin: 1rem 0 0; font-size: .9rem; }
+.a11y-pied a { color: inherit; }
+@media print { .a11y-onglet, .a11y-panneau { display: none; } }
+
+/* Réglages choisis par le visiteur (classes posées sur <html> par accessibilite.js) */
+html.a11y-contraste { --texte: #000000; --fond: #ffffff; --accent: #0b3d91; --danger: #7a0b16; --bordure: #000000; --focus: #000000; }
+@media (prefers-color-scheme: dark) {
+  html.a11y-contraste { --texte: #ffffff; --fond: #000000; --accent: #bcd6ff; --danger: #ffb3b3; --bordure: #ffffff; --focus: #ffffff; }
+}
+html.a11y-gris { filter: grayscale(1); }
+html.a11y-liens a, html.a11y-contraste a { text-decoration: underline !important; text-underline-offset: .2em; }
+html.a11y-police body, html.a11y-police body * {
+  font-family: Verdana, "DejaVu Sans", Tahoma, sans-serif !important; font-style: normal !important;
+}
+/* Valeurs du critère WCAG 1.4.12 (espacement du texte) */
+html.a11y-espacement body * { line-height: 1.8 !important; letter-spacing: .12em !important; word-spacing: .16em !important; }
+html.a11y-espacement p { margin-bottom: 2em; }
+html.a11y-sans-animation *, html.a11y-sans-animation *::before, html.a11y-sans-animation *::after {
+  transition: none !important; animation: none !important; scroll-behavior: auto !important;
+}
