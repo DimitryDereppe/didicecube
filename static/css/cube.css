@@ -60,16 +60,33 @@ select { font: inherit; padding: .5rem; border: 1px solid var(--bordure); border
 .pas-3d { justify-content: center; }
 .pas-3d[hidden] { display: none; }
 
+/* Plein écran : la vue 3D et ses boutons seuls, cube agrandi */
+.atelier__vue.plein-ecran {
+  position: fixed; inset: 0; z-index: 1000; margin: 0; padding: 1rem; overflow: auto;
+  display: flex; flex-direction: column; justify-content: center; align-items: center; background: var(--fond);
+}
+.plein-ecran h2, .plein-ecran #bloc-skin { display: none; }
+/* Le cube vu en coin dépasse de sa boîte d'environ 40 % : la marge de la scène en tient compte. */
+.plein-ecran .scene { perspective: 1600px; padding: min(15vmin, 8rem) 0; }
+.plein-ecran .cube3d { --taille: min(38vmin, 20rem); }
+.plein-ecran .boutons { justify-content: center; }
+.plein-ecran .fleche3d__nom { font-size: 2rem; }
+body.sans-defilement { overflow: hidden; }
+/* Plein écran de secours (iPhone : la vue occupe seulement la fenêtre) : clin d'œil en bas à droite. */
+.plein-ecran--fenetre::after {
+  content: "💩" / ""; position: fixed; right: max(1rem, env(safe-area-inset-right)); bottom: max(1rem, env(safe-area-inset-bottom));
+  font-size: 2rem; line-height: 1; pointer-events: none;
+}
+
 /* Prochain mouvement : cases qui vont bouger et flèche de rotation sur la face à tourner */
 .case.a-tourner { outline: 3px dashed #111; outline-offset: -5px; }
 .fleche3d { position: absolute; inset: 0; display: grid; place-items: center; pointer-events: none; }
 .fleche3d[hidden] { display: none; }
 .fleche3d svg { position: absolute; inset: 6%; width: 88%; height: 88%; }
 .fleche3d--inverse svg { transform: scaleX(-1); }
-.fleche3d__trait { fill: #fff; stroke: #111; stroke-width: 3; stroke-linejoin: round; }
-.fleche3d__trait path:first-child { fill: none; stroke: #fff; stroke-width: 9; filter: drop-shadow(0 0 1.5px #111) drop-shadow(0 0 1.5px #111); }
-.fleche3d__demi { display: none; }
-.fleche3d--demi .fleche3d__demi { display: inline; }
+.fleche3d__arc { fill: none; stroke: #fff; stroke-width: 8; stroke-linecap: round; filter: drop-shadow(0 0 1.5px #111) drop-shadow(0 0 1.5px #111); }
+.fleche3d__pointe { fill: #fff; stroke: #111; stroke-width: 2.5; stroke-linejoin: round; }
+.fleche3d__nom small { display: block; margin-top: .15rem; font-size: .6em; font-weight: 600; text-align: center; }
 .fleche3d__nom {
   position: relative; font: 700 1.4rem/1 system-ui, sans-serif; color: #fff;
   background: #111c; padding: .2rem .45rem; border-radius: 6px;

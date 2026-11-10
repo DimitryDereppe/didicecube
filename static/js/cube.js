@@ -44,11 +44,25 @@
   const cases3d = [];
   const fleches = {}; // flèche de rotation dessinée sur chaque face 3D
 
-  // Arc de 270° dans le sens des aiguilles d'une montre (vu de face), pointe à gauche ;
-  // une seconde pointe en bas pour les demi-tours. Le sens inverse est obtenu par symétrie.
-  const SVG_FLECHE = `<svg viewBox="0 0 100 100" aria-hidden="true">
-    <g class="fleche3d__trait"><path d="M50 20 A30 30 0 1 1 20 50" fill="none"/>
-      <path d="M20 36 L10 55 L30 55 Z"/><path class="fleche3d__demi" d="M36 80 L55 70 L55 90 Z"/></g></svg>`;
+  // Une flèche courbe par quart de tour, dans le sens des aiguilles d'une montre (vu de face),
+  // en partant du haut. Le sens inverse est obtenu par symétrie (CSS).
+  function svgFleche(quarts) {
+    const point = (angle, r = 32) => {
+      const a = (angle * Math.PI) / 180;
+      return `${(50 + r * Math.cos(a)).toFixed(1)} ${(50 + r * Math.sin(a)).toFixed(1)}`;
+    };
+    let arcs = "";
+    let pointes = "";
+    for (let i = 0; i < quarts; i++) {
+      const debut = -90 + 90 * i + 8;
+      const fin = debut + 62;
+      arcs += `<path class="fleche3d__arc" d="M${point(debut)} A32 32 0 0 1 ${point(fin)}"/>`;
+      pointes += `<path class="fleche3d__pointe" d="M${point(fin + 16)} L${point(fin, 22)} L${point(fin, 42)} Z"/>`;
+    }
+    return `<svg viewBox="0 0 100 100" aria-hidden="true">${arcs}${pointes}</svg>`;
+  }
+  const QUARTS_MOUVEMENT = { "": 1, "'": 1, 2: 2 };
+  const FRACTIONS = ["", "1/4", "1/2", "3/4"];
 
   function construit() {
     const palette = $("palette");
@@ -101,7 +115,7 @@
       const fleche = document.createElement("div");
       fleche.className = "fleche3d";
       fleche.hidden = true;
-      fleche.innerHTML = `${SVG_FLECHE}<span class="fleche3d__nom"></span>`;
+      fleche.innerHTML = '<svg></svg><span class="fleche3d__nom"></span>';
       face3d.append(fleche);
       fleches[face] = fleche;
       patron.append(grille);
@@ -259,6 +273,43 @@
     });
   })();
 
+  // --- Plein écran ------------------------------------------------------------------
+  // La section de la vue passe en plein écran avec ses boutons ; le choix d'habillage est masqué (CSS).
+  // Sans l'API Fullscreen (iPhone), la classe seule fait occuper toute la fenêtre à la section.
+
+  const sectionVue = document.querySelector(".atelier__vue");
+
+  function marquePleinEcran(actif) {
+    sectionVue.classList.toggle("plein-ecran", actif);
+    if (!actif) sectionVue.classList.remove("plein-ecran--fenetre");
+    document.body.classList.toggle("sans-defilement", actif);
+    $("plein-ecran").setAttribute("aria-pressed", String(actif));
+    $("plein-ecran").textContent = actif ? "Quitter le plein écran" : "Plein écran";
+  }
+
+  $("plein-ecran").addEventListener("click", async () => {
+    const actif = sectionVue.classList.contains("plein-ecran");
+    if (actif) {
+      if (document.fullscreenElement) await document.exitFullscreen().catch(() => {});
+      marquePleinEcran(false);
+    } else {
+      marquePleinEcran(true);
+      // Sans vrai plein écran (iPhone), la vue occupe la fenêtre : la classe affiche le clin d'œil en bas à droite.
+      let vrai = false;
+      if (sectionVue.requestFullscreen) vrai = await sectionVue.requestFullscreen().then(() => true, () => false);
+      sectionVue.classList.toggle("plein-ecran--fenetre", !vrai);
+    }
+  });
+  // Sortie par Échap ou par le navigateur.
+  document.addEventListener("fullscreenchange", () => {
+    if (!document.fullscreenElement) marquePleinEcran(false);
+  });
+  document.addEventListener("keydown", (ev) => {
+    if (ev.key === "Escape" && !document.fullscreenElement && sectionVue.classList.contains("plein-ecran")) {
+      marquePleinEcran(false);
+    }
+  });
+
   // --- Prochain mouvement sur la vue 3D -------------------------------------------
 
   // Normales des faces (repère CSS : x à droite, y vers le bas, z vers l'écran).
@@ -299,9 +350,14 @@
     if (!mouvement) return;
     const face = mouvement[0];
     const fleche = fleches[face];
+    const quarts = QUARTS_MOUVEMENT[mouvement.slice(1)];
     fleche.classList.toggle("fleche3d--inverse", mouvement[1] === "'");
-    fleche.classList.toggle("fleche3d--demi", mouvement[1] === "2");
-    fleche.querySelector(".fleche3d__nom").textContent = mouvement;
+    fleche.querySelector("svg").outerHTML = svgFleche(quarts);
+    const nom = fleche.querySelector(".fleche3d__nom");
+    nom.textContent = mouvement;
+    const fraction = document.createElement("small");
+    fraction.textContent = FRACTIONS[quarts];
+    nom.append(fraction);
     fleche.hidden = false;
     const perm = D.mouvements[mouvement];
     const f = FACES.indexOf(face);

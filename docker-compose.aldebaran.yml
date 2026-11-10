@@ -1,0 +1,23 @@
+# Usage (sur aldebaran) : docker compose -f docker-compose.prod.yml -f docker-compose.aldebaran.yml up -d --build
+# Surcharge pour aldebaran, où le Caddy de BookStack (projet ~/bookstack) tient déjà les ports 80 et 443 :
+# - le Caddy du projet ne publie aucun port et sert en HTTP simple (Caddyfile.aldebaran) ;
+# - il rejoint le réseau du Caddy de BookStack (bookstack_default), qui lui transmet
+#   https://didicecube.izzutahutiz.duckdns.org sous le nom didicecube-caddy.
+services:
+  caddy:
+    ports: !reset []
+    volumes: !override
+      - ./Caddyfile.aldebaran:/etc/caddy/Caddyfile:ro
+      - statiques:/srv/statiques:ro
+      - caddy_donnees:/data
+      - caddy_config:/config
+    networks:
+      default: {}
+      proxy:
+        aliases:
+          - didicecube-caddy
+
+networks:
+  proxy:
+    name: bookstack_default
+    external: true # réseau créé par le projet bookstack, pas par celui-ci
