@@ -18,6 +18,15 @@
   let progressionId = D.progression ? D.progression.id : null;
   let minuterie = null;
 
+  // Logo au centre de la face avant : il tourne avec la face (F = quart horaire, F' = antihoraire, F2 = demi-tour).
+  // L'état en lettres ne garde pas son sens : on compte les quarts de tour à part.
+  const CENTRE_F = FACES.indexOf("F") * 9 + 4;
+  const QUARTS_F = { F: 1, "F'": -1, F2: 2 };
+  const tourneLogo = (q, m) => q + (QUARTS_F[m] || 0);
+  let quartsSaisie = 0;
+  let angleLogo = 0; // angle affiché, cumulé pour que l'animation prenne le plus court chemin
+  const logos = [];
+
   const applique = (e, m) => D.mouvements[m].map((i) => e[i]);
   const animationsCoupees = () =>
     matchMedia("(prefers-reduced-motion: reduce)").matches ||
@@ -33,6 +42,13 @@
 
   const casesPatron = [];
   const cases3d = [];
+  const fleches = {}; // flèche de rotation dessinée sur chaque face 3D
+
+  // Arc de 270° dans le sens des aiguilles d'une montre (vu de face), pointe à gauche ;
+  // une seconde pointe en bas pour les demi-tours. Le sens inverse est obtenu par symétrie.
+  const SVG_FLECHE = `<svg viewBox="0 0 100 100" aria-hidden="true">
+    <g class="fleche3d__trait"><path d="M50 20 A30 30 0 1 1 20 50" fill="none"/>
+      <path d="M20 36 L10 55 L30 55 Z"/><path class="fleche3d__demi" d="M36 80 L55 70 L55 90 Z"/></g></svg>`;
 
   function construit() {
     const palette = $("palette");
@@ -71,6 +87,7 @@
         b.addEventListener("click", () => peint(k));
         grille.append(b);
         casesPatron[k] = b;
+        if (k === CENTRE_F) ajouteLogo(b);
 
         const c = document.createElement("div");
         c.className = "case";
@@ -79,11 +96,37 @@
         });
         face3d.append(c);
         cases3d[k] = c;
+        if (k === CENTRE_F) ajouteLogo(c);
       }
+      const fleche = document.createElement("div");
+      fleche.className = "fleche3d";
+      fleche.hidden = true;
+      fleche.innerHTML = `${SVG_FLECHE}<span class="fleche3d__nom"></span>`;
+      face3d.append(fleche);
+      fleches[face] = fleche;
       patron.append(grille);
       cube.append(face3d);
     }
     choisitCouleur("B");
+  }
+
+  function ajouteLogo(caseCentre) {
+    const img = document.createElement("img");
+    img.src = D.logo;
+    img.alt = "";
+    img.className = "logo-centre";
+    caseCentre.classList.add("case--logo");
+    caseCentre.append(img);
+    logos.push(img);
+  }
+
+  // Tourne le logo vers le sens voulu, par le plus court chemin (un demi-tour se fait dans le sens horaire).
+  function orienteLogo(quarts) {
+    const cible = (((quarts % 4) + 4) % 4) * 90;
+    let ecart = (((cible - angleLogo) % 360) + 360) % 360;
+    if (ecart > 180) ecart -= 360;
+    angleLogo += ecart;
+    for (const img of logos) img.style.transform = `rotate(${angleLogo}deg)`;
   }
 
   function choisitCouleur(code) {
@@ -93,6 +136,7 @@
 
   function affiche() {
     const e = sol ? sol.etats[sol.position] : etat;
+    orienteLogo(sol ? sol.quarts[sol.position] : quartsSaisie);
     for (let k = 0; k < 54; k++) {
       const code = e[k];
       const nom = D.couleurs[code].nom;
@@ -135,7 +179,8 @@
     if (!sol) return;
     arreteLecture();
     sol = null;
-    $("lecteur").hidden = true;
+    montreProchain(null);
+    $("lecteur").hidden = $("pas-3d").hidden = true;
   }
 
   function peint(k) {
@@ -144,9 +189,10 @@
     affiche();
   }
 
-  function remplace(nouvel) {
+  function remplace(nouvel, quarts = 0) {
     oublieSolution();
     etat = nouvel;
+    quartsSaisie = quarts;
     progressionId = null;
     message("");
     affiche();
@@ -157,14 +203,16 @@
     const noms = Object.keys(D.mouvements);
     let e = D.resolu.split("");
     let derniere = "";
+    let quarts = 0;
     for (let n = 0; n < 25; ) {
       const m = noms[Math.floor(Math.random() * noms.length)];
       if (m[0] === derniere) continue;
       e = applique(e, m);
+      quarts = tourneLogo(quarts, m);
       derniere = m[0];
       n++;
     }
-    remplace(e);
+    remplace(e, quarts);
   });
 
   // --- Vue 3D : boutons et glisser ------------------------------------------------
@@ -211,6 +259,62 @@
     });
   })();
 
+  // --- Prochain mouvement sur la vue 3D -------------------------------------------
+
+  // Normales des faces (repère CSS : x à droite, y vers le bas, z vers l'écran).
+  const NORMALES = { U: [0, -1, 0], D: [0, 1, 0], L: [-1, 0, 0], R: [1, 0, 0], F: [0, 0, 1], B: [0, 0, -1] };
+  // Vues « en coin » (trois faces visibles) proposées quand la face à tourner est cachée.
+  const VUES_COIN = [-25, 25].flatMap((a) => [-35, 35, -145, 145].map((b) => [a, b]));
+
+  function faceVisible(face, [ax, ay] = vue) {
+    const [x, y, z] = NORMALES[face];
+    const a = (ax * Math.PI) / 180;
+    const b = (ay * Math.PI) / 180;
+    // rotateX(a) rotateY(b) : rotateY s'applique en premier.
+    const z1 = -Math.sin(b) * x + Math.cos(b) * z;
+    return Math.sin(a) * y + Math.cos(a) * z1 > 0.25;
+  }
+
+  // Si la face est cachée, passe à la vue en coin la plus proche qui la montre (plus court chemin).
+  function montreFace(face) {
+    if (faceVisible(face)) return;
+    const proches = VUES_COIN.filter((v) => faceVisible(face, v)).map((v) =>
+      v.map((angle, i) => angle + 360 * Math.round((vue[i] - angle) / 360)),
+    );
+    const ecart = (v) => Math.abs(v[0] - vue[0]) + Math.abs(v[1] - vue[1]);
+    vue = proches.reduce((m, v) => (ecart(v) < ecart(m) ? v : m));
+    oriente();
+  }
+
+  let marquees = [];
+
+  // Flèche sur la face à tourner et cases qui vont bouger encadrées ; null efface tout.
+  function montreProchain(mouvement) {
+    for (const f of FACES) fleches[f].hidden = true;
+    for (const k of marquees) {
+      casesPatron[k].classList.remove("a-tourner");
+      cases3d[k].classList.remove("a-tourner");
+    }
+    marquees = [];
+    if (!mouvement) return;
+    const face = mouvement[0];
+    const fleche = fleches[face];
+    fleche.classList.toggle("fleche3d--inverse", mouvement[1] === "'");
+    fleche.classList.toggle("fleche3d--demi", mouvement[1] === "2");
+    fleche.querySelector(".fleche3d__nom").textContent = mouvement;
+    fleche.hidden = false;
+    const perm = D.mouvements[mouvement];
+    const f = FACES.indexOf(face);
+    for (let k = 0; k < 54; k++) {
+      if (perm[k] !== k || Math.floor(k / 9) === f) marquees.push(k);
+    }
+    for (const k of marquees) {
+      casesPatron[k].classList.add("a-tourner");
+      cases3d[k].classList.add("a-tourner");
+    }
+    montreFace(face);
+  }
+
   // --- Skins ----------------------------------------------------------------------
 
   if (D.skins.length) {
@@ -256,17 +360,21 @@
       return;
     }
     const etats = [etat.slice()];
-    for (const m of donnees.mouvements) etats.push(applique(etats[etats.length - 1], m));
+    const quarts = [quartsSaisie];
+    for (const m of donnees.mouvements) {
+      etats.push(applique(etats[etats.length - 1], m));
+      quarts.push(tourneLogo(quarts[quarts.length - 1], m));
+    }
     const etapeDe = [];
     donnees.etapes.forEach((e, i) => e.mouvements.forEach(() => etapeDe.push(i)));
-    sol = { depart: etat.slice(), mouvements: donnees.mouvements, etapes: donnees.etapes, etats, position: 0, etapeDe };
+    sol = { depart: etat.slice(), mouvements: donnees.mouvements, etapes: donnees.etapes, etats, quarts, position: 0, etapeDe };
     message(
       sol.mouvements.length
         ? `Solution trouvée : ${sol.mouvements.length} mouvements en ${sol.etapes.length} étapes.`
         : "Ce cube est déjà résolu !",
     );
     afficheEtapes();
-    $("lecteur").hidden = sol.mouvements.length === 0;
+    $("lecteur").hidden = $("pas-3d").hidden = sol.mouvements.length === 0;
     if (sol.mouvements.length === 0) sol = null;
     else va(Math.min(etape, sol.mouvements.length));
   }
@@ -317,6 +425,7 @@
     if (position === total) texte += ". Le cube est résolu !";
     $("position").textContent = texte;
     $("prochain").textContent = position < total ? `Prochain mouvement : ${decrit(sol.mouvements[position])}` : "";
+    montreProchain(position < total ? sol.mouvements[position] : null);
 
     for (const b of $("etapes").querySelectorAll(".mouvement")) {
       const actuel = Number(b.dataset.position) === position;
@@ -326,8 +435,8 @@
         b.scrollIntoView({ block: "nearest", behavior: animationsCoupees() ? "auto" : "smooth" });
       } else b.removeAttribute("aria-current");
     }
-    $("debut").disabled = $("precedent").disabled = position === 0;
-    $("suivant").disabled = $("fin").disabled = position === total;
+    $("debut").disabled = $("precedent").disabled = $("precedent-3d").disabled = position === 0;
+    $("suivant").disabled = $("fin").disabled = $("suivant-3d").disabled = position === total;
     if (position === total) arreteLecture();
   }
 
@@ -359,6 +468,8 @@
   $("debut").addEventListener("click", () => { arreteLecture(); va(0); });
   $("precedent").addEventListener("click", () => { arreteLecture(); va(sol.position - 1); });
   $("suivant").addEventListener("click", () => { arreteLecture(); va(sol.position + 1, true); });
+  $("precedent-3d").addEventListener("click", () => { arreteLecture(); va(sol.position - 1); });
+  $("suivant-3d").addEventListener("click", () => { arreteLecture(); va(sol.position + 1, true); });
   $("fin").addEventListener("click", () => { arreteLecture(); va(sol.mouvements.length); });
   $("modifier").addEventListener("click", () => {
     oublieSolution();

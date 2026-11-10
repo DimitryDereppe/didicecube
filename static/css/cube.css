@@ -33,6 +33,12 @@ select { font: inherit; padding: .5rem; border: 1px solid var(--bordure); border
   transition: background-color .25s ease, box-shadow .25s ease;
 }
 .case:disabled { cursor: default; }
+/* Logo au centre de la face avant : il tourne avec la face (cube.js, orienteLogo). */
+.case--logo { position: relative; overflow: hidden; }
+.logo-centre { position: absolute; inset: 6%; width: 88%; height: 88%; pointer-events: none; }
+@media (prefers-reduced-motion: no-preference) {
+  :root:not(.a11y-sans-animation) .logo-centre { transition: transform .35s ease; }
+}
 .case.bouge { box-shadow: inset 0 0 0 3px #222, 0 0 0 2px var(--fond); }
 
 /* Cube 3D */
@@ -50,6 +56,28 @@ select { font: inherit; padding: .5rem; border: 1px solid var(--bordure); border
 .face3d--R { transform: rotateY(90deg) translateZ(calc(var(--taille) / 2)); }
 .face3d--L { transform: rotateY(-90deg) translateZ(calc(var(--taille) / 2)); }
 .face3d .case.bouge { box-shadow: inset 0 0 0 4px #111, 0 0 12px 2px #fff; }
+
+.pas-3d { justify-content: center; }
+.pas-3d[hidden] { display: none; }
+
+/* Prochain mouvement : cases qui vont bouger et flèche de rotation sur la face à tourner */
+.case.a-tourner { outline: 3px dashed #111; outline-offset: -5px; }
+.fleche3d { position: absolute; inset: 0; display: grid; place-items: center; pointer-events: none; }
+.fleche3d[hidden] { display: none; }
+.fleche3d svg { position: absolute; inset: 6%; width: 88%; height: 88%; }
+.fleche3d--inverse svg { transform: scaleX(-1); }
+.fleche3d__trait { fill: #fff; stroke: #111; stroke-width: 3; stroke-linejoin: round; }
+.fleche3d__trait path:first-child { fill: none; stroke: #fff; stroke-width: 9; filter: drop-shadow(0 0 1.5px #111) drop-shadow(0 0 1.5px #111); }
+.fleche3d__demi { display: none; }
+.fleche3d--demi .fleche3d__demi { display: inline; }
+.fleche3d__nom {
+  position: relative; font: 700 1.4rem/1 system-ui, sans-serif; color: #fff;
+  background: #111c; padding: .2rem .45rem; border-radius: 6px;
+}
+@media (prefers-reduced-motion: no-preference) {
+  :root:not(.a11y-sans-animation) .fleche3d:not([hidden]) svg { animation: fleche-pulse 1.2s ease-in-out infinite alternate; }
+}
+@keyframes fleche-pulse { from { opacity: .8; } to { opacity: 1; } }
 
 /* Photo */
 .photo { margin-top: 1rem; border: 1px solid var(--bordure); border-radius: 6px; padding: .5rem 1rem; }

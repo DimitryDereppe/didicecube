@@ -7,6 +7,7 @@ from django.core.exceptions import ValidationError
 from django.db import transaction
 from django.http import FileResponse, Http404, JsonResponse
 from django.shortcuts import get_object_or_404, redirect, render
+from django.templatetags.static import static
 from django.urls import reverse
 from django.views.decorators.http import require_POST
 
@@ -71,6 +72,7 @@ def atelier(request):
         "progression": progression,
         "connecte": request.user.is_authenticated,
         "skins": _skins_de(request.user),
+        "logo": static("img/izzu-tahutiz-marque.svg"),
         "urls": {
             "solution": reverse("cube:solution"),
             "enregistrer": reverse("cube:enregistrer"),
