@@ -4,6 +4,15 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>{% block titre %}{{ SITE_NOM }}{% endblock %}</title>
+  {# Référencement : texte affiché sous le lien dans Google, et pages à garder hors des résultats (noindex). #}
+  <meta name="description" content="{% block description %}Résolvez votre cube 3×3 en ligne, gratuitement : saisie des couleurs en 3D ou par photo, solution couche par couche expliquée et rejouée mouvement par mouvement.{% endblock %}">
+  <meta name="robots" content="{% block robots %}index, follow{% endblock %}">
+  <link rel="canonical" href="{{ request.scheme }}://{{ request.get_host }}{{ request.path }}">
+  {# Aperçu au partage (Facebook, WhatsApp…) : le titre et la description viennent des balises ci-dessus. #}
+  <meta property="og:type" content="website">
+  <meta property="og:site_name" content="{{ SITE_NOM }}">
+  <meta property="og:locale" content="fr_FR">
+  <meta property="og:url" content="{{ request.scheme }}://{{ request.get_host }}{{ request.path }}">
   <link rel="stylesheet" href="{% static 'css/base.css' %}">
   <link rel="stylesheet" href="{% static 'css/accessibilite.css' %}">
   {# Onglet Accessibilité : sans defer, pour appliquer les réglages du visiteur avant l'affichage. #}

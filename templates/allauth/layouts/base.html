@@ -1,4 +1,5 @@
 {% extends "base.html" %}
+{% block robots %}noindex, nofollow{% endblock %}
 {% comment %}
   Habille toutes les pages de django-allauth (connexion, mot de passe oublié, double authentification…)
   avec la mise en page du site : en-tête, messages, pied de page, onglet Accessibilité.

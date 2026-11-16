@@ -64,6 +64,8 @@ INSTALLED_APPS = [
     "django.contrib.sessions",
     "django.contrib.messages",
     "django.contrib.staticfiles",
+    # sitemap.xml pour les moteurs de recherche (sans le module « sites » : le domaine vient de la requête).
+    "django.contrib.sitemaps",
     # Connexion, mot de passe oublié et double authentification (module MFA) : django-allauth
     "allauth",
     "allauth.account",
@@ -135,6 +137,13 @@ AUTH_USER_MODEL = "comptes.Utilisateur"
 # Rôles du projet : un groupe Django par rôle, créé automatiquement après "migrate".
 # Chaque projet remplace cette liste par la sienne (ex. Cocon : administrateur, editrice, client).
 ROLES = env_liste("ROLES", "administrateur,client")
+
+# Administrateur commun à tous les projets du socle : compte superutilisateur (+ rôle administrateur)
+# créé à chaque "migrate" s'il manque, et destinataire des erreurs 500 (ADMINS). Pas pendant les tests.
+ADMIN_SOCLE = "izzu.tahutiz@mailo.com"
+COMPTES_ADMINS = [] if sys.argv[1:2] == ["test"] else env_liste("COMPTES_ADMINS", ADMIN_SOCLE)
+# Hash Django de leur mot de passe, remis à chaque "migrate" (rempli par outils/mot-de-passe-admin.sh du socle).
+COMPTES_ADMINS_HASH = env("COMPTES_ADMINS_HASH", "")
 
 # Rôles pour lesquels la double authentification est obligatoire (les superutilisateurs l'ont toujours).
 # Les autres utilisateurs peuvent l'activer d'eux-mêmes depuis « Mon compte ».
@@ -271,7 +280,7 @@ if not DEBUG:
 # ADMINS (emails séparés par des virgules) reçoit en plus chaque erreur 500 par courriel, hors debug.
 # Pendant les tests, la console se tait : les erreurs 403 et 404 provoquées exprès noieraient le résultat.
 _EN_TEST = len(sys.argv) > 1 and sys.argv[1] == "test"
-ADMINS = [(email, email) for email in env_liste("ADMINS", "")]
+ADMINS = [(email, email) for email in env_liste("ADMINS", ADMIN_SOCLE)]
 SERVER_EMAIL = DEFAULT_FROM_EMAIL
 LOGGING = {
     "version": 1,

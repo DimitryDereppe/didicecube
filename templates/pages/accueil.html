@@ -1,7 +1,25 @@
 {% extends "base.html" %}
+{% block titre %}{{ SITE_NOM }} · Résoudre un cube 3×3 en ligne, étape par étape{% endblock %}
+{% block tete %}
+  {# Données structurées : disent à Google que le site est une application web gratuite, en français. #}
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "WebApplication",
+    "name": "{{ SITE_NOM|escapejs }}",
+    "url": "{{ request.scheme }}://{{ request.get_host }}/",
+    "description": "Résolvez votre cube 3×3 en ligne : saisie des couleurs en 3D ou par photo, solution couche par couche expliquée et rejouée mouvement par mouvement.",
+    "applicationCategory": "EducationalApplication",
+    "operatingSystem": "Tous (navigateur web)",
+    "inLanguage": "fr",
+    "isAccessibleForFree": true,
+    "offers": {"@type": "Offer", "price": "0", "priceCurrency": "EUR"}
+  }
+  </script>
+{% endblock %}
 {% block contenu %}
   <h1>{{ SITE_NOM }}</h1>
-  <p>Indiquez les couleurs de votre Rubik's Cube, à la main ou en le prenant en photo, et obtenez sa
+  <p>Indiquez les couleurs de votre cube 3×3, à la main ou en le prenant en photo, et obtenez sa
     résolution : expliquée étape par étape, rejouée mouvement par mouvement, ou en lecture continue.</p>
   <p><a class="bouton" href="{% url 'cube:atelier' %}">Résoudre mon cube</a></p>
 

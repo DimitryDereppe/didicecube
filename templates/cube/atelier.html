@@ -1,6 +1,7 @@
 {% extends "base.html" %}
 {% load static %}
-{% block titre %}Résoudre un cube · {{ SITE_NOM }}{% endblock %}
+{% block titre %}Résoudre un cube 3×3 : saisie en 3D ou par photo · {{ SITE_NOM }}{% endblock %}
+{% block description %}Entrez les couleurs de votre cube 3×3 sur un modèle en 3D ou en le photographiant, puis suivez la solution couche par couche, mouvement par mouvement.{% endblock %}
 {% block tete %}
   <link rel="stylesheet" href="{% static 'css/cube.css' %}">
   <script src="{% static 'js/cube.js' %}" defer></script>

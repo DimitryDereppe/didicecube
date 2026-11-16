@@ -1,6 +1,6 @@
 # Didicecube
 
-Site de résolution de Rubik's Cube : indiquez l'état de départ de votre cube
+Site de résolution de cube 3×3 : indiquez l'état de départ de votre cube
 (à la main, ou par photo) depuis une interface visuelle en 3D, personnalisable
 avec des skins, et obtenez la solution — expliquée à l'écrit, rejouée
 visuellement étape par étape, ou en lecture continue.
@@ -17,9 +17,20 @@ visuellement étape par étape, ou en lecture continue.
 - **Résolution à l'écrit** : la liste des mouvements (notation du cube) avec
   une explication de chaque étape.
 - **Résolution visuelle pas à pas** : le cube affiché avance d'un mouvement à
-  la fois, à la demande.
+  la fois, à la demande, avec des boutons précédent / suivant juste sous le
+  cube 3D.
 - **Résolution en continu** : lecture automatique et animée de la résolution
   complète.
+- **Prochain mouvement montré sur le cube 3D** : une flèche courbe par quart
+  de tour sur la face à tourner (une pour R ou R', deux pour R2), avec le nom
+  du mouvement et la fraction (1/4, 1/2) ; les cases qui vont bouger sont
+  encadrées. Si la face est cachée, la vue pivote vers la vue la plus proche
+  qui la montre.
+- **Plein écran** : la vue 3D seule, agrandie, avec ses boutons (sans le
+  choix d'habillage). Sur iPhone, où une page ne peut pas passer en vrai plein
+  écran, la vue occupe toute la fenêtre.
+- **Logo au centre de la face avant** : le logo Izzu Tahutiz tourne avec la
+  face (F, F', F2), sur le cube 3D comme sur le patron.
 - **Compte utilisateur** : enregistre l'état de départ du cube et la
   progression, pour reprendre une résolution plus tard ; export et
   suppression de ses données (RGPD).
@@ -39,7 +50,9 @@ authentification), journal d'accès, droits RGPD, onglet Accessibilité, Docker.
   propriétaire), pages et appels JSON.
 - **`static/js/cube.js`** : patron, cube 3D en CSS (sans bibliothèque), photo
   (couleurs détectées dans le navigateur, photos jamais envoyées), lecture pas
-  à pas ou continue.
+  à pas ou continue, flèches du prochain mouvement, plein écran. Le sens du
+  logo central n'est pas dans l'état du cube : il est compté à part, en quarts
+  de tour.
 
 La première version (API Express + client Svelte) reste dans l'historique git.
 
@@ -66,6 +79,21 @@ outils/verifie.sh rapide   # ruff + tests
 
 Voir le README du gabarit Django (Caddy + gunicorn, sauvegardes). Les images
 des skins sont dans le volume `medias` : à inclure dans les sauvegardes.
+
+### Serveur de test (aldebaran)
+
+En ligne sur https://didicecube.izzutahutiz.duckdns.org. Le Caddy de BookStack
+y tient déjà les ports 80 et 443 : `docker-compose.aldebaran.yml` et
+`Caddyfile.aldebaran` placent le Caddy du projet derrière lui, sans port publié.
+
+```bash
+# sur aldebaran, dans ~/didicecube
+docker compose -f docker-compose.prod.yml -f docker-compose.aldebaran.yml up -d --build
+```
+
+Pour envoyer des fichiers modifiés depuis le poste de développement puis
+reconstruire : `socle-commun/outils/didicecube/deploie-aldebaran.sh FICHIER...`
+(n'envoie jamais `.env`).
 
 ## Documents
 

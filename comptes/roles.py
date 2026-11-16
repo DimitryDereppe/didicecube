@@ -8,9 +8,12 @@ Utilisation dans une vue :
     class MaVue(RoleRequisMixin, View):   -> classe, avec roles_requis = ("editrice",)
 Dans un gabarit HTML : {% if user|a_le_role:"editrice" %} (charger {% load roles %}).
 """
+import logging
 from functools import wraps
 
 from django.conf import settings
+from django.contrib.auth import get_user_model
+from django.contrib.auth.hashers import identify_hasher
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.contrib.auth.models import Group
@@ -21,6 +24,34 @@ def cree_groupes_des_roles(**kwargs):
     """Crée les groupes manquants pour chaque rôle déclaré dans settings.ROLES."""
     for role in settings.ROLES:
         Group.objects.get_or_create(name=role)
+
+
+def cree_comptes_admins(**kwargs):
+    """Garantit que chaque email de settings.COMPTES_ADMINS a un compte superutilisateur.
+
+    Mot de passe : celui de settings.COMPTES_ADMINS_HASH (hash Django) s'il est rempli, remis à chaque
+    passage ; sinon compte créé sans mot de passe (« Mot de passe oublié ») et mot de passe existant gardé.
+    """
+    Utilisateur = get_user_model()
+    empreinte = settings.COMPTES_ADMINS_HASH
+    if empreinte:
+        try:
+            identify_hasher(empreinte)
+        except ValueError:
+            logging.getLogger(__name__).warning("COMPTES_ADMINS_HASH n'est pas un hash Django valide : ignoré.")
+            empreinte = ""
+    for email in settings.COMPTES_ADMINS:
+        utilisateur = Utilisateur.objects.filter(email__iexact=email).first()
+        if utilisateur is None:
+            utilisateur = Utilisateur.objects.create_superuser(email=email, password=None)
+        elif not (utilisateur.is_staff and utilisateur.is_superuser):
+            utilisateur.is_staff = utilisateur.is_superuser = True
+            utilisateur.save(update_fields=["is_staff", "is_superuser"])
+        if empreinte and utilisateur.password != empreinte:
+            utilisateur.password = empreinte
+            utilisateur.save(update_fields=["password"])
+        if "administrateur" in settings.ROLES:
+            donne_role(utilisateur, "administrateur")
 
 
 def roles_de(utilisateur):

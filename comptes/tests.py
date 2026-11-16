@@ -10,7 +10,7 @@ from django.urls import reverse
 
 from journal.models import EvenementAcces
 
-from .roles import a_le_role, donne_role, role_requis, roles_de
+from .roles import a_le_role, cree_comptes_admins, donne_role, role_requis, roles_de
 
 Utilisateur = get_user_model()
 MOT_DE_PASSE = "un-mot-de-passe-de-test-assez-long"
@@ -60,6 +60,37 @@ class GroupesCreesTests(TestCase):
         cree_groupes_des_roles()
         self.assertTrue(Group.objects.filter(name="administrateur").exists())
         self.assertTrue(Group.objects.filter(name="client").exists())
+
+
+@override_settings(ROLES=["administrateur", "client"], COMPTES_ADMINS=["Admin@Exemple.fr"], COMPTES_ADMINS_HASH="")
+class ComptesAdminsTests(TestCase):
+    def test_cree_le_compte_sans_mot_de_passe_utilisable(self):
+        cree_comptes_admins()
+        admin = Utilisateur.objects.get(email="admin@exemple.fr")
+        self.assertTrue(admin.is_superuser and admin.is_staff)
+        self.assertFalse(admin.has_usable_password())
+        self.assertTrue(a_le_role(admin, "administrateur"))
+
+    def test_promeut_un_compte_existant_sans_toucher_au_mot_de_passe(self):
+        Utilisateur.objects.create_user("admin@exemple.fr", MOT_DE_PASSE)
+        cree_comptes_admins()
+        cree_comptes_admins()  # deux passages : pas de doublon
+        admin = Utilisateur.objects.get(email="admin@exemple.fr")
+        self.assertTrue(admin.is_superuser)
+        self.assertTrue(admin.check_password(MOT_DE_PASSE))
+
+    def test_reprend_le_mot_de_passe_du_hash(self):
+        from django.contrib.auth.hashers import make_password
+
+        with self.settings(COMPTES_ADMINS_HASH=make_password("mot-de-passe-commun-du-socle")):
+            cree_comptes_admins()
+        admin = Utilisateur.objects.get(email="admin@exemple.fr")
+        self.assertTrue(admin.check_password("mot-de-passe-commun-du-socle"))
+
+    def test_hash_invalide_ignore(self):
+        with self.settings(COMPTES_ADMINS_HASH="pas-un-hash"):
+            cree_comptes_admins()
+        self.assertFalse(Utilisateur.objects.get(email="admin@exemple.fr").has_usable_password())
 
 
 class RgpdTests(TestCase):
